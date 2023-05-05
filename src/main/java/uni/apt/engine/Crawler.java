@@ -26,7 +26,9 @@ public class Crawler{
     public static final Log log = Log.getLog(Crawler.class);
 
     private Queue<String> toBeSearched;
+
     private final Queue<String> visitedPages = new LinkedList<>();
+    private final List<String> visitedPagesLog = new LinkedList<>();
     private final Queue<Document> visitedPagesData = new LinkedList<>();
 
     private int crawledCount;
@@ -123,6 +125,7 @@ public class Crawler{
 
             synchronized (finishCountLock){
                 finishCount++;
+                visitedPagesLog.clear(); //free mem , I know all threads will do it , but it doesn't really matter
             }
 
             log.i(Thread.currentThread().getName() , "Finished CrawlerThread " + isRunning());
@@ -133,7 +136,7 @@ public class Crawler{
     private void addLink(String str){
         synchronized (addLock){
             synchronized (finishLock){
-                if (visitedPages.contains(str)){
+                if (visitedPagesLog.contains(str)){
                     //log.w("Already visited \"" + str + "\" ignoring.");
                     return;
                 }
@@ -168,6 +171,7 @@ public class Crawler{
         synchronized (finishLock){
             crawledCount++;
             visitedPages.add(str);
+            visitedPagesLog.add(str);
             visitedPagesData.add(doc);
             log.i("Finished: " + str + " [" + crawledCount + "]");
         }
@@ -183,6 +187,21 @@ public class Crawler{
         synchronized (finishCountLock) {
             return finishCount != threadCount;
         }
+    }
+
+    public LoadedSite getNextSite(){ //used to quickly obtain the loaded data
+        synchronized (finishLock){
+            LoadedSite s = new LoadedSite();
+            s.link = visitedPages.poll();
+            if (s.link == null)
+                return null;
+
+            s.doc = visitedPagesData.poll();
+
+
+            return s;
+        }
+
     }
 
     public Queue<String> getVisitedPages() {

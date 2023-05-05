@@ -72,16 +72,18 @@ public class Indexer {
 
     private final Object getLock = new Object();
     public LoadedSite nextSite(){
-        synchronized (getLock){
-            LoadedSite s = new LoadedSite();
-            s.link = crawler.getVisitedPages().poll();
-            s.doc  = crawler.getVisitedPagesData().poll();
+//        synchronized (getLock){
+//            LoadedSite s = new LoadedSite();
+//            s.link = crawler.getVisitedPages().poll();
+//            s.doc  = crawler.getVisitedPagesData().poll();
+//
+//            if (s.link == null)
+//                return null;
+//
+//            return s;
+//        }
 
-            if (s.link == null)
-                return null;
-
-            return s;
-        }
+        return crawler.getNextSite();
     }
 
 
@@ -92,8 +94,8 @@ public class Indexer {
         if (c == null)
             throw new NullPointerException("Crawler is null");
 
-        if (c.isRunning())
-            throw new IllegalStateException("Crawler is still running");
+//        if (c.isRunning())
+//            throw new IllegalStateException("Crawler is still running");
 
         indexedWords.clear();
         paragraphList.clear();
@@ -116,7 +118,9 @@ public class Indexer {
             super.run();
             log.i(getName() , "Started");
             LoadedSite s;
-            while ((s = nextSite()) != null){
+            while ((s = nextSite()) != null || crawler.isRunning()){
+                if (s == null) continue;
+
                 log.i(getName() , "Indexing: " + s.link);
 
                 Map<String , List<WordRecord>> words = new HashMap<>();
@@ -129,8 +133,11 @@ public class Indexer {
                     String text = element.text();
 
                     synchronized (paragraphLock){
-                        paragraphList.add(text);
-                        para = paragraphList.size() - 1;
+                        para = paragraphList.indexOf(text);
+                        if (para < 0){
+                            paragraphList.add(text);
+                            para = paragraphList.size() - 1;
+                        }
                     }
 
                     String[] ws = text.split("\\s+");

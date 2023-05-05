@@ -12,7 +12,7 @@ public class LoaderTest {
         long start = System.currentTimeMillis();
         IndexedDatabase db = new IndexedDatabase();
 
-        if (db.getFromFile("base.idx")){
+        if (db.getFromFile("base.bidx")){
             System.out.println("time: " + (System.currentTimeMillis() - start) + " ms");
             System.out.println("loaded!\n");
 
