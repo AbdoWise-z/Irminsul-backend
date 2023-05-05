@@ -18,7 +18,7 @@ public class IndexedDatabase {
 
     }
 
-    public void insert(Indexer idx){
+    public synchronized void insert(Indexer idx){
         if (idx.isRunning()){
             throw new IllegalStateException("Indexer is still running.");
         }
@@ -61,12 +61,12 @@ public class IndexedDatabase {
         paragraphList.addAll(paragraphs);
     }
 
-    public void clear(){
+    public synchronized void clear(){
         indexedWords.clear();
         paragraphList.clear();
     }
 
-    public IndexDatabaseSnapshot getSnapshot() {
+    public synchronized IndexDatabaseSnapshot getSnapshot() {
         IndexDatabaseSnapshot snap = new IndexDatabaseSnapshot();
         snap.paragraph = paragraphList.toArray(new String[0]);
 
@@ -98,7 +98,7 @@ public class IndexedDatabase {
 
     }
 
-    public void set(IndexDatabaseSnapshot snap){
+    public synchronized void set(IndexDatabaseSnapshot snap){
         paragraphList.clear();
         indexedWords.clear();
 
@@ -120,7 +120,7 @@ public class IndexedDatabase {
     }
 
 
-    public boolean WriteToFile(String f){
+    public synchronized boolean WriteToFile(String f){
         IndexDatabaseSnapshot snap = getSnapshot();
         try{
             ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(f));
@@ -134,7 +134,7 @@ public class IndexedDatabase {
         return false;
     }
 
-    public boolean getFromFile(String f){
+    public synchronized boolean getFromFile(String f){
 
         try{
             ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
@@ -145,5 +145,13 @@ public class IndexedDatabase {
         }
 
         return false;
+    }
+
+    public synchronized Map<String , WordProps> getIndexedWords(){
+        return indexedWords;
+    }
+
+    public synchronized ArrayList<String> getParagraphList(){
+        return paragraphList;
     }
 }
