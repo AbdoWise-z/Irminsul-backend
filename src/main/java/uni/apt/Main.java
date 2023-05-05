@@ -1,9 +1,7 @@
 package uni.apt;
 
-import org.jsoup.Jsoup;
+import uni.apt.engine.*;
 import uni.apt.core.Log;
-import uni.apt.engine.Crawler;
-import uni.apt.engine.Indexer;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -47,15 +45,20 @@ public class Main {
 
         log.i("Indexer finished");
 
+        IndexedDatabase database = new IndexedDatabase();
+        database.insert(indexer);
 
-        for (Map.Entry<String , Indexer.WordProps> et : indexer.getIndexedWords().entrySet()){
+        database.WriteToFile("base.idx");
+
+
+        for (Map.Entry<String , WordProps> et : indexer.getIndexedWords().entrySet()){
             if (!et.getKey().equals("Dream,")) continue;
             System.out.println();
             System.out.println(et.getKey());
             for (int i = 0;i < et.getValue().indices.size();i++){
                 System.out.println("   " + et.getValue().links.get(i));
                 for (int j = 0;j < et.getValue().indices.get(i).size();j++){
-                    Indexer.WordIndex idx = et.getValue().indices.get(i).get(j);
+                    WordRecord idx = et.getValue().indices.get(i).get(j);
                     System.out.println("   " + "   " + idx.tagIndex + "  " + idx.pos + "  " + idx.type);
                 }
             }
@@ -67,7 +70,7 @@ public class Main {
             String word = sr.next();
             if (word.equals("!exit")) break;
             int wi = 0;
-            for (Map.Entry<String , Indexer.WordProps> et : indexer.getIndexedWords().entrySet()){
+            for (Map.Entry<String , WordProps> et : indexer.getIndexedWords().entrySet()){
                 if (!et.getKey().toLowerCase().contains(word.toLowerCase())) continue;
                 wi++;
                 if (wi > 10) break;
@@ -79,7 +82,7 @@ public class Main {
                     wj++;
                     if (wj > 4) break;
                     for (int j = 0;j < et.getValue().indices.get(i).size();j++){
-                        Indexer.WordIndex idx = et.getValue().indices.get(i).get(j);
+                        WordRecord idx = et.getValue().indices.get(i).get(j);
                         System.out.println("   " + "   " + indexer.getParagraphList().get(idx.paragraphIndex));
                     }
                 }

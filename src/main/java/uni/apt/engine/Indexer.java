@@ -4,26 +4,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import uni.apt.core.Log;
 
+import java.io.Serializable;
 import java.util.*;
 
 public class Indexer {
 
-    public static class WordProps { //struct
-        public ArrayList<String> links = new ArrayList<>();
-        public ArrayList<List<WordIndex>> indices = new ArrayList<>();
-    }
-
-    public static class WordIndex{
-        public int pos;
-        public int type;
-        public int tagIndex;
-        public int paragraphIndex;
-    }
-
-    public static class Site{
-        public String link;
-        public Document doc;
-    }
 
 
     public static final Log log = Log.getLog(Indexer.class);
@@ -46,7 +31,6 @@ public class Indexer {
             return finishCount != threadCount;
         }
     }
-
     private final Object insertLock = new Object();
     private final Map<String , WordProps> indexedWords = new HashMap<>();
 
@@ -54,7 +38,7 @@ public class Indexer {
     private final Object paragraphLock = new Object();
     private final List<String> currentActive = new LinkedList<>(); //linked because we will add and remove quickly
     private final Object activeLick = new Object();
-    private void insert(String word , String link , List<WordIndex> indices){
+    private void insert(String word , String link , List<WordRecord> indices){
         while (true) {
             synchronized (activeLick) { //synchronized must be on the inside to avoid locking
                 if (! currentActive.contains(word)) {
@@ -87,9 +71,9 @@ public class Indexer {
     }
 
     private final Object getLock = new Object();
-    public Site nextSite(){
+    public LoadedSite nextSite(){
         synchronized (getLock){
-            Site s = new Site();
+            LoadedSite s = new LoadedSite();
             s.link = crawler.getVisitedPages().poll();
             s.doc  = crawler.getVisitedPagesData().poll();
 
@@ -131,11 +115,11 @@ public class Indexer {
         public void run() {
             super.run();
             log.i(getName() , "Started");
-            Site s;
+            LoadedSite s;
             while ((s = nextSite()) != null){
                 log.i(getName() , "Indexing: " + s.link);
 
-                Map<String , List<WordIndex>> words = new HashMap<>();
+                Map<String , List<WordRecord>> words = new HashMap<>();
                 int tagIndex = 0;
                 int wordIndex;
                 int para;
@@ -157,13 +141,13 @@ public class Indexer {
                         if (word.length() < 3) continue; //a , an and garbage letters
                         if (word.equals("the")) continue;
 
-                        WordIndex idx = new WordIndex();
-                        idx.type = (tagName.equals("div") || tagName.equals("p")) ? 0 : 1;
+                        WordRecord idx = new WordRecord();
+                        idx.type = (tagName.equals("div") || tagName.equals("p")) ? WordRecord.PARAGRAPH : WordRecord.HEADER;
                         idx.pos  = wordIndex++;
                         idx.tagIndex = tagIndex;
                         idx.paragraphIndex = para;
 
-                        List<WordIndex> l = words.get(word);
+                        List<WordRecord> l = words.get(word);
                         if (l == null){
                             l = new LinkedList<>();
                         }
@@ -176,7 +160,7 @@ public class Indexer {
                 }
 
                 //finished , now we add all of this to the final array
-                for (Map.Entry<String , List<WordIndex>> et : words.entrySet()){
+                for (Map.Entry<String , List<WordRecord>> et : words.entrySet()){
                     insert(et.getKey() , s.link , et.getValue());
                 }
             }
