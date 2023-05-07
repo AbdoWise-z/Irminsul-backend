@@ -4,15 +4,18 @@ import com.google.search.robotstxt.Matcher;
 import com.google.search.robotstxt.Parser;
 import com.google.search.robotstxt.RobotsParseHandler;
 import com.google.search.robotstxt.RobotsParser;
+import com.mongodb.client.MongoCollection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import uni.apt.Defaults;
 import uni.apt.core.Log;
+import uni.apt.core.OnlineDB;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
 
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -24,13 +27,14 @@ public class Crawler{
 
 
     public static final Log log = Log.getLog(Crawler.class);
+    static {
+        log.setEnabled(true);
+    }
 
     private Queue<String> toBeSearched;
 
-    private final Queue<String> visitedPages = new LinkedList<>();
     private final List<String> visitedPagesLog = new LinkedList<>();
-    private final Queue<Document> visitedPagesData = new LinkedList<>();
-
+    private final String[] currentActive;
     private int crawledCount;
     private int LIMIT = 100;
     private final int threadCount;
@@ -40,9 +44,21 @@ public class Crawler{
 
     private final Map<String , Matcher> cachedRobots = new HashMap<>();
 
+    private boolean force_stop = false;
+
     class CrawlerThread extends Thread{
-        private CrawlerThread(String n){
+        private HashMap<String,String> cookies = new HashMap<>(); //empty
+        private byte[] buff = new byte[8 * 1024];
+        private PrintWriter logger;
+        private final int id;
+        private CrawlerThread(String n , int id){
             setName(n);
+            this.id = id;
+            try {
+                logger = new PrintWriter(new FileOutputStream("logger/crawler" + id + ".txt"), true);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
         @Override
         public void run() {
@@ -50,134 +66,186 @@ public class Crawler{
             log.i(Thread.currentThread().getName() , "Starting CrawlerThread");
             final Parser p = new RobotsParser(new RobotsParseHandler());
 
+            logger.println("Started");
+
             while (KeepRunning()){
-                String link = getNext();
-
-                if (link == null) //jop done
-                    continue;
-
-                log.i(Thread.currentThread().getName() , "Processing:" + link);
-
-                //Do shit with the link
-                ArrayList<String> links;
-                Document doc;
                 try {
-                    doc = Jsoup.connect(link).get();
-                } catch (Exception e) {
-                    log.i(Thread.currentThread().getName() ,"Couldn't connect to Document");
-                    continue;
-                }
+                    String link = getNext(id);
 
-                Matcher matcher = null;
-                log.i(getName() , "Loading Robots.txt");
+                    if (link == null) //jop done
+                        continue;
 
-                try {
-                    URL url = new URL(link);
-                    String host = url.getHost();
-                    String robots_txt_link = "https://" + host + "/robots.txt";
-                    matcher = cachedRobots.get(robots_txt_link);
+                    log.i(Thread.currentThread().getName(), "Processing:" + link);
+                    logger.println("Starting link: " + link);
 
-                    if (matcher == null) {
-                        URL robots_text_url = new URL(robots_txt_link);
+                    //Do shit with the link
+                    ArrayList<String> links;
+                    Document doc;
 
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(robots_text_url.openStream()));
-                        StringBuilder text = new StringBuilder();
-                        String l = null;
-
-                        while ((l = reader.readLine()) != null) {
-                            l = l.trim();
-                            if (l.startsWith("<!DOCTYPE")) throw new Exception("link was html page");
-                            if (l.startsWith("#")) continue;
-                            if (l.isEmpty()) continue;
-
-                            text.append(l);
-                            text.append("\n");
-                        }
-
-                        //System.out.println(text);
-
-                        matcher = p.parse(text.toString().getBytes(StandardCharsets.UTF_8));
-                        cachedRobots.put(robots_txt_link , matcher);
+                    try {
+                        doc = Jsoup.connect(link).timeout(Defaults.CONNECTION_TIMEOUT_MS).cookies(cookies).get();
+                    } catch (Exception e) {
+                        log.i(Thread.currentThread().getName(), "Couldn't connect to Document");
+                        continue;
                     }
 
-                } catch (Exception e) {
-                    log.e(Thread.currentThread().getName() ,  "Couldn't read Robots.txt (" + e.getMessage() + ")");
-                }
+                    Matcher matcher = null;
+                    log.i(getName(), "Loading Robots.txt");
+                    logger.println("Loading Robots");
+                    HttpURLConnection connection = null;
+                    try {
+                        URL url = new URL(link);
+                        String host = url.getHost();
+                        String robots_txt_link = "https://" + host + "/robots.txt";
+                        log.i(getName() , "Robots:" + robots_txt_link);
+                        logger.println("Robots: " + robots_txt_link);
 
-                log.i(getName() , "Loaded Robots.txt");
+                        matcher = cachedRobots.get(robots_txt_link);
 
-                links = extractLinks(doc);
-                log.i(Thread.currentThread().getName() , "Loaded \"" + link + "\"");
+                        if (matcher == null) {
 
-                for (String s : links)
-                {
-                    log.i(Thread.currentThread().getName() ,"Trying to add : \"" + s + "\"");
-                    if (matcher != null){
-                        if (!matcher.singleAgentAllowedByRobots("*" , link)){
-                            log.e(getName() , String.format("Robots.txt blocked \"%s\"" , link));
-                            continue;
+                            URL robots_text_url = new URL(robots_txt_link);
+                            connection = (HttpURLConnection) robots_text_url.openConnection();
+                            connection.setRequestMethod("GET");
+                            connection.setReadTimeout(Defaults.ROBOTS_TIMEOUT_MS);
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+                            StringBuilder text = new StringBuilder();
+                            String l;
+
+                            while ((l = reader.readLine()) != null){
+                                text.append(l);
+                            }
+
+
+                            matcher = p.parse(text.toString().getBytes(StandardCharsets.UTF_8));
+
+                            if (matcher == null)
+                                throw new NullPointerException("failed to parse");
+
+                            cachedRobots.put(robots_txt_link, matcher);
                         }
+
+                        log.i(getName(), "Loaded Robots.txt");
+                        logger.println("Loaded Robots");
+                    } catch (Exception e) {
+                        log.e(Thread.currentThread().getName(), "Couldn't read Robots.txt (" + e.getMessage() + ")");
+                        logger.println("Couldn't read Robots.txt (" + e.getMessage() + ")");
+                    } finally {
+                        if (connection != null) connection.disconnect();
                     }
-                    addLink(s);
+
+
+                    links = extractLinks(doc);
+                    log.i(Thread.currentThread().getName(), "Loaded \"" + link + "\"");
+
+                    for (String s : links) {
+                        //log.i(Thread.currentThread().getName() ,"Trying to add : \"" + s + "\"");
+                        if (matcher != null) {
+                            if (!matcher.singleAgentAllowedByRobots("*", link)) {
+                                log.e(getName(), String.format("Robots.txt blocked \"%s\"", link));
+                                continue;
+                            }
+                        }
+                        addLink(s);
+                    }
+
+                    markFinish(id, link, doc);
+                    logger.println("Finished link");
+
+                } catch (Exception e) { //this should never happen
+                    log.e("General Error: " + e.getMessage());
+                    e.printStackTrace();
                 }
-                markFinish(link , doc);
             }
 
             synchronized (finishCountLock){
                 finishCount++;
-                visitedPagesLog.clear(); //free mem , I know all threads will do it , but it doesn't really matter
             }
 
-            log.i(Thread.currentThread().getName() , "Finished CrawlerThread " + isRunning());
+            logger.println("Finished");
+            logger.close();
+
+            log.i(Thread.currentThread().getName() , "Finished CrawlerThread ");
         }
     }
 
     private final Object addLock = new Object();
     private void addLink(String str){
         synchronized (addLock){
-            synchronized (finishLock){
-                if (visitedPagesLog.contains(str)){
+
+            if (toBeSearched.contains(str))
+                return;
+
+            synchronized (finishLock) {
+                if (visitedPagesLog.contains(str)) {
                     //log.w("Already visited \"" + str + "\" ignoring.");
                     return;
                 }
-            }
 
-            synchronized (finishLock){
-                if (crawledCount >= LIMIT){
-                    //log.w("Limit reached , \"" + str + "\" ignoring.");
-                    return;
+                for (int i = 0; i < threadCount; i++) {
+                    if (currentActive[i] != null && currentActive[i].equals(str))
+                        return;
                 }
             }
+//            synchronized (finishLock){
+//                if (crawledCount >= LIMIT){
+//                    //log.w("Limit reached , \"" + str + "\" ignoring.");
+//                    return;
+//                }
+//            }
 
             toBeSearched.add(str);
             //log.i(Thread.currentThread().getName() , "Added: " + str);
         }
     }
-
-    private final Object getLock = new Object();
-    private String getNext(){
+    private String getNext(int id){
         if (crawledCount > LIMIT){
             return null;
         }
-        synchronized (getLock){
-            if (toBeSearched.size() > 0) {
-                return toBeSearched.remove();
+
+        synchronized (addLock){
+            String n = toBeSearched.poll();
+
+            synchronized (finishLock) {
+                currentActive[id] = n;
             }
-            return null;
+
+            return n;
         }
     }
     private final Object finishLock = new Object();
-    private void markFinish(String str , Document doc){
+    private final Object onlineLock = new Object();
+    private void markFinish(int id , String str , Document doc){
         synchronized (finishLock){
+//            if (visitedPagesLog.contains(str)) {  //will never happen
+//                log.w("Page already crawled : " + str);
+//                return;
+//            }
             crawledCount++;
-            visitedPages.add(str);
             visitedPagesLog.add(str);
-            visitedPagesData.add(doc);
+
+            currentActive[id] = null;
+
             log.i("Finished: " + str + " [" + crawledCount + "]");
+        }
+
+        String page_src = doc.select("body").html();
+        //log.i(page_src);
+
+        org.bson.Document item = new org.bson.Document();
+        item.put("link" , str);
+        item.put("body" , page_src);
+
+        synchronized (onlineLock){
+            results.insertOne(item); //snd the object to the db
         }
     }
 
     private boolean KeepRunning(){
+        if (force_stop)
+            return false;
+
         synchronized (finishLock){
             return crawledCount < LIMIT;
         }
@@ -187,33 +255,6 @@ public class Crawler{
         synchronized (finishCountLock) {
             return finishCount != threadCount;
         }
-    }
-
-    public LoadedSite getNextSite(){ //used to quickly obtain the loaded data
-        synchronized (finishLock){
-            LoadedSite s = new LoadedSite();
-            s.link = visitedPages.poll();
-            if (s.link == null)
-                return null;
-
-            s.doc = visitedPagesData.poll();
-
-
-            return s;
-        }
-
-    }
-
-    public Queue<String> getVisitedPages() {
-        if (isRunning())
-            return null;
-        return visitedPages;
-    }
-
-    public Queue<Document> getVisitedPagesData() {
-        if (isRunning())
-            return null;
-        return visitedPagesData;
     }
 
     public int getCrawledCount() {
@@ -228,41 +269,74 @@ public class Crawler{
         crawledCount = 0;
         threadCount = thread_count;
         finishCount = thread_count;
+
+        currentActive = new String[thread_count];
     }
 
-    public synchronized void start(int limit , Queue<String> seed , boolean clear){
+    private MongoCollection<org.bson.Document> results;
+    public synchronized void start(int limit , Queue<String> seed , LinkedList<String> visitedPagesLog){
         if (isRunning())
             throw new IllegalStateException("already running");
 
-        finishCount = 0;
+        if (!OnlineDB.ready())
+            throw new IllegalStateException("Online DB not running");
 
-        toBeSearched = seed;
+        if (seed == null){
+            throw new NullPointerException("seed is null!!");
+        }else{
+            toBeSearched = seed;
+        }
+
+        force_stop = false;
+
+        results = OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_CRAWLED);
+
+        this.visitedPagesLog.clear();
+
+        if (visitedPagesLog != null){
+            this.visitedPagesLog.addAll(visitedPagesLog);
+        }
+
+        finishCount = 0;
 
         LIMIT = limit;
 
-        if (clear) {
-            cachedRobots.clear();
-            visitedPages.clear();
-            visitedPagesData.clear();
-            crawledCount = 0;
-        }
 
         for (int i = 0;i < threadCount;i++){
-            new CrawlerThread("TH-" + i).start();
+            new CrawlerThread("TH-" + i , i).start();
         }
     }
 
-    private URI normalize(String url) throws URISyntaxException
+    public synchronized void stop(){
+        if (!isRunning())
+            throw new IllegalStateException("not running.");
+
+        force_stop = true;
+    }
+
+    public Queue<String> getCurrentSeed() {
+        if (isRunning())
+            return null;
+        return toBeSearched;
+    }
+
+    public List<String> getVisitedPages(){
+        if (isRunning())
+            return null;
+        return visitedPagesLog;
+    }
+
+    private static URI normalize(String url) throws URISyntaxException
     {
         URI uri = new URI(url);
         return new URI("https",uri.getHost().replace("www.",""),uri.getPath(),null);
     }
 
-    private boolean isSamePage(String url1, String url2) throws URISyntaxException
+    private static boolean isSamePage(String url1, String url2) throws URISyntaxException
     {
         return normalize(url1).equals(normalize(url2));
     }
-    private ArrayList<String> extractLinks(Document doc)
+    private static ArrayList<String> extractLinks(Document doc)
     {
         ArrayList<String> list = new ArrayList<>();
 

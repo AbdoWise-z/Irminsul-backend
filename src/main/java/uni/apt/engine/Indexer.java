@@ -1,8 +1,13 @@
 package uni.apt.engine;
 
-import org.jsoup.nodes.Document;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoIterable;
+import org.bson.Document;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import uni.apt.Defaults;
 import uni.apt.core.Log;
+import uni.apt.core.OnlineDB;
 
 import java.io.Serializable;
 import java.util.*;
@@ -12,8 +17,6 @@ public class Indexer {
 
 
     public static final Log log = Log.getLog(Indexer.class);
-
-    private Crawler crawler;
     private final int threadCount;
     private int finishCount;
     private final Object finishCountLock = new Object();
@@ -32,10 +35,7 @@ public class Indexer {
         }
     }
     private final Object insertLock = new Object();
-    private final Map<String , WordProps> indexedWords = new HashMap<>();
-
-    private final LinkedList<String> paragraphList = new LinkedList<>();
-    private final Object paragraphLock = new Object();
+    final Map<String , WordProps> indexedWords = new LinkedHashMap<>();
     private final List<String> currentActive = new LinkedList<>(); //linked because we will add and remove quickly
     private final Object activeLick = new Object();
     private void insert(String word , String link , List<WordRecord> indices){
@@ -57,6 +57,13 @@ public class Indexer {
         if (props == null)
             props = new WordProps();
 
+        int idx = props.links.indexOf(link);
+        if (idx > 0){
+            log.e("Error , link already exists : " + link);
+            props.links.remove(idx);
+            props.indices.remove(idx);
+        }
+
         props.links.add(link);
         props.indices.add(indices);
 
@@ -71,37 +78,60 @@ public class Indexer {
     }
 
     private final Object getLock = new Object();
-    public LoadedSite nextSite(){
-//        synchronized (getLock){
-//            LoadedSite s = new LoadedSite();
-//            s.link = crawler.getVisitedPages().poll();
-//            s.doc  = crawler.getVisitedPagesData().poll();
-//
-//            if (s.link == null)
-//                return null;
-//
-//            return s;
-//        }
 
-        return crawler.getNextSite();
+    private LoadedSite getNextSite(){
+        synchronized (getLock){
+            if (load_cache.size() == 0){
+                MongoIterable<Document> docs = crawler_result.find().limit(LOAD_CACHE_MAX_SIZE);
+                for (Document doc : docs) {
+                    load_cache.add(doc);
+                    crawler_result.deleteOne(doc);
+                }
+            }
+
+            if (load_cache.size() == 0){
+                return null;
+            }
+
+            LoadedSite s = new LoadedSite();
+            Document item = load_cache.pollFirst();
+            s.link = item.getString("link");
+            s.doc  = Jsoup.parse(item.getString("body"));
+            return s;
+        }
     }
 
 
-    public synchronized void start(Crawler c){
+    private final Object paragraphLock = new Object();
+    private long paragraph_counter = 0;
+    private MongoCollection<Document> paragraphs;
+    private MongoCollection<Document> crawler_result;
+
+    private LinkedList<Document> load_cache;
+    private static final int LOAD_CACHE_MAX_SIZE = 300; //load at most 300 documents at one time
+                                                        //the higher, the better performance but higher mem usage
+
+    public synchronized void start(String snapshot_file){
         if (isRunning())
             throw new IllegalStateException("already running");
 
-        if (c == null)
-            throw new NullPointerException("Crawler is null");
-
-//        if (c.isRunning())
-//            throw new IllegalStateException("Crawler is still running");
+        if (!OnlineDB.ready())
+            throw new IllegalStateException("Online DB not running");
 
         indexedWords.clear();
-        paragraphList.clear();
+
+        if (snapshot_file != null){ // set the initial state
+            if (!IndexerIO.getFromFile(snapshot_file , this)){
+                throw new IllegalArgumentException("the snapshot file is not valid");
+            }
+        }
 
         finishCount = 0;
-        crawler = c;
+        crawler_result = OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_CRAWLED);
+        paragraphs     = OnlineDB.base.getCollection(Defaults.INDEXER_INDEXED_PARAGRAPHS);
+        paragraph_counter = paragraphs.countDocuments();
+
+        load_cache = new LinkedList<>();
 
         for (int i = 0;i < threadCount;i++){
             new IndexerThread("IX-" + i).start();
@@ -117,27 +147,24 @@ public class Indexer {
         public void run() {
             super.run();
             log.i(getName() , "Started");
-            LoadedSite s;
-            while ((s = nextSite()) != null || crawler.isRunning()){
-                if (s == null) continue;
+            LoadedSite s = null;
+            while ((s = getNextSite()) != null){
 
                 log.i(getName() , "Indexing: " + s.link);
 
                 Map<String , List<WordRecord>> words = new HashMap<>();
                 int tagIndex = 0;
                 int wordIndex;
-                int para;
+                long para;
 
                 for (Element element : s.doc.select("h1, h2, h3, h4, h5, h6, p, div")) {
                     String tagName = element.tagName();
                     String text = element.text();
 
                     synchronized (paragraphLock){
-                        para = paragraphList.indexOf(text);
-                        if (para < 0){
-                            paragraphList.add(text);
-                            para = paragraphList.size() - 1;
-                        }
+                        paragraphs.insertOne(new Document().append("text" , text).append("index" , paragraph_counter));
+                        para = paragraph_counter;
+                        paragraph_counter++;
                     }
 
                     String[] ws = text.split("\\s+");
@@ -221,9 +248,4 @@ public class Indexer {
         }
     }
 
-    public LinkedList<String> getParagraphList() {
-        if (isRunning())
-            return null;
-        return paragraphList;
-    }
 }

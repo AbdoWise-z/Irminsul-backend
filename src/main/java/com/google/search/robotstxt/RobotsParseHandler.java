@@ -21,7 +21,9 @@ import java.nio.charset.StandardCharsets;
 /** Implementation of parsing strategy used in robots.txt parsing. */
 public class RobotsParseHandler implements ParseHandler {
   private static final Log logger = Log.getLog(RobotsParseHandler.class);
-
+  static {
+    logger.setEnabled(false);
+  }
   protected RobotsContents robotsContents;
   private RobotsContents.Group currentGroup;
   private boolean foundContent;

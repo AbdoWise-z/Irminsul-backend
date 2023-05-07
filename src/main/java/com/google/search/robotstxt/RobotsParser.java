@@ -24,6 +24,9 @@ import java.util.stream.Stream;
 /** Robots.txt parser implementation. */
 public class RobotsParser extends Parser {
   private static final Log logger = Log.getLog(RobotsParser.class);
+  static {
+    logger.setEnabled(false);
+  }
   private final int valueMaxLengthBytes;
 
   public RobotsParser(final ParseHandler parseHandler) {

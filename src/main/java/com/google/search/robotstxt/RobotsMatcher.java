@@ -28,6 +28,9 @@ import java.util.Map;
  */
 public class RobotsMatcher implements Matcher {
   private static final Log logger = Log.getLog(RobotsMatcher.class);
+  static {
+    logger.setEnabled(false);
+  }
 
   /** Class containing current match priorities */
   private static class Match {

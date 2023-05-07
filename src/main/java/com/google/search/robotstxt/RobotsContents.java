@@ -25,6 +25,9 @@ import java.util.Set;
 /** Representation of robots.txt contents: multiple groups of rules. */
 public class RobotsContents {
   private static final Log logger = Log.getLog(RobotsContents.class);
+  static {
+    logger.setEnabled(false);
+  }
   /**
    * Representation of robots.txt group of rules: multiple user-agents to which multiple rules are
    * applied.
