@@ -69,9 +69,14 @@ public class MongoDBIndexerStorage implements IndexerStorage{
             //index.deleteOne(matcher);
 
             insert.add(doc);
-        }
 
-        OnlineDB.IndexerDB.insertMany(insert);
+            if (insert.size() > 500){
+                OnlineDB.IndexerDB.insertMany(insert);
+                insert.clear();
+            }
+        }
+        if (insert.size() > 0)
+            OnlineDB.IndexerDB.insertMany(insert);
 
 
         log.i("Clearing mem");

@@ -22,7 +22,6 @@ public class MongoOneWordSearchThread  extends Thread implements RankerSearchThr
         result = new LinkedList<>();
 
         Document matcher = new Document("word", new Document("$regex", Pattern.compile("" + _word + "(?i)")));
-
     }
 
     @Override

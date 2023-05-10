@@ -163,6 +163,9 @@ public class Indexer {
                 int wordIndex;
                 int wordsCount = 0;
 
+                HashMap<Integer , Long> paragraphMapping = new HashMap<>();
+                //use a map to map paragraph ids to avoid any racing condition
+
                 for (Element element : s.doc.select("h1, h2, h3, h4, h5, h6, p, div")) {
                     String tagName = element.tagName();
                     String text = element.text().trim();
@@ -191,7 +194,7 @@ public class Indexer {
                         idx.type = (tagName.equals("div") || tagName.equals("p")) ? WordRecord.PARAGRAPH : WordRecord.HEADER;
                         idx.pos  = wordIndex++;
                         idx.tagIndex = tagIndex;
-                        idx.paragraphIndex = paragraph_counter;
+                        idx.paragraphIndex = -1; //tag index is our local paragraph id , I'll use the map later to fix it to its write position
 
                         List<WordRecord> l = words.get(word);
                         if (l == null){
@@ -205,6 +208,7 @@ public class Indexer {
                     if (wordIndex != 0) { //if we didn't add any words then skip this paragraph
                         synchronized (paragraphLock) {
                             OnlineDB.ParagraphsDB.insertOne(new Document().append("text", text).append("index", paragraph_counter));
+                            paragraphMapping.put(tagIndex , paragraph_counter - 1);
                             paragraph_counter++;
                         }
                     }
@@ -212,14 +216,20 @@ public class Indexer {
                     tagIndex++;
                 }
 
+                long titleId; //to avoid any racing condition
                 synchronized (titleLock){
                     OnlineDB.TitlesDB.insertOne(new Document().append("text", s.title).append("index", title_counter));
+                    titleId = title_counter;
                     title_counter++;
                 }
 
                 //finished , now we add all of this to the final array
                 for (Map.Entry<String , List<WordRecord>> et : words.entrySet()){
-                    insert(et.getKey() , title_counter , s.link , (float) et.getValue().size() / wordsCount , et.getValue());
+                    for (WordRecord w : et.getValue()){
+                        //un-map the paragraph index
+                        w.paragraphIndex = paragraphMapping.getOrDefault(w.tagIndex , (long) -1); //-1 == error
+                    }
+                    insert(et.getKey() , titleId , s.link , (float) et.getValue().size() / wordsCount , et.getValue());
                 }
 
                 synchronized (insertLock){
