@@ -1,6 +1,5 @@
 package uni.apt.engine;
 
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoIterable;
 import org.bson.Document;
 import org.jsoup.Jsoup;
@@ -44,7 +43,7 @@ public class Indexer {
     //final Map<String , WordProps> indexedWords = new LinkedHashMap<>();
     private final List<String> currentActive = new LinkedList<>(); //linked because we will add and remove quickly
     private final Object activeLick = new Object();
-    private void insert(String word , String link , float tf , List<WordRecord> indices){
+    private void insert(String word , long title , String link , float tf , List<WordRecord> indices){
         while (true) {
             synchronized (activeLick) { //synchronized must be on the inside to avoid locking
                 if (! currentActive.contains(word)) {
@@ -69,11 +68,13 @@ public class Indexer {
             props.links.remove(idx);
             props.indices.remove(idx);
             props.TFs.remove(idx);
+            props.titleIds.remove(idx);
         }
 
         props.links.add(link);
         props.indices.add(indices);
         props.TFs.add(tf);
+        props.titleIds.add(title);
 
         synchronized (insertLock){
             storage.set(word , props);
@@ -90,10 +91,10 @@ public class Indexer {
     private LoadedSite getNextSite(){
         synchronized (getLock){
             if (load_cache.size() == 0){
-                MongoIterable<Document> docs = crawler_result.find().limit(LOAD_CACHE_MAX_SIZE);
+                MongoIterable<Document> docs = OnlineDB.CrawlerCrawledDB.find().limit(LOAD_CACHE_MAX_SIZE);
                 for (Document doc : docs) {
                     load_cache.add(doc);
-                    crawler_result.deleteOne(doc);
+                    OnlineDB.CrawlerCrawledDB.deleteOne(doc);
                 }
             }
 
@@ -105,6 +106,7 @@ public class Indexer {
             Document item = load_cache.pollFirst();
             s.link = item.getString("link");
             s.doc  = Jsoup.parse(item.getString("body"));
+            s.title = item.getString("title");
             return s;
         }
     }
@@ -112,8 +114,9 @@ public class Indexer {
 
     private final Object paragraphLock = new Object();
     private long paragraph_counter = 0;
-    private MongoCollection<Document> paragraphs;
-    private MongoCollection<Document> crawler_result;
+
+    private final Object titleLock = new Object();
+    private long title_counter = 0;
 
     private LinkedList<Document> load_cache;
     private static final int LOAD_CACHE_MAX_SIZE = 300; //load at most 300 documents at one time
@@ -131,10 +134,8 @@ public class Indexer {
         }
 
         finishCount = 0;
-        crawler_result = OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_CRAWLED);
-        paragraphs     = OnlineDB.base.getCollection(Defaults.INDEXER_INDEXED_PARAGRAPHS);
-        paragraph_counter = paragraphs.countDocuments();
-
+        paragraph_counter = OnlineDB.ParagraphsDB.countDocuments();
+        title_counter     = OnlineDB.TitlesDB.countDocuments();
         load_cache = new LinkedList<>();
 
         for (int i = 0;i < threadCount;i++){
@@ -203,7 +204,7 @@ public class Indexer {
 
                     if (wordIndex != 0) { //if we didn't add any words then skip this paragraph
                         synchronized (paragraphLock) {
-                            paragraphs.insertOne(new Document().append("text", text).append("index", paragraph_counter));
+                            OnlineDB.ParagraphsDB.insertOne(new Document().append("text", text).append("index", paragraph_counter));
                             paragraph_counter++;
                         }
                     }
@@ -211,9 +212,14 @@ public class Indexer {
                     tagIndex++;
                 }
 
+                synchronized (titleLock){
+                    OnlineDB.TitlesDB.insertOne(new Document().append("text", s.title).append("index", title_counter));
+                    title_counter++;
+                }
+
                 //finished , now we add all of this to the final array
                 for (Map.Entry<String , List<WordRecord>> et : words.entrySet()){
-                    insert(et.getKey() , s.link , (float) et.getValue().size() / wordsCount , et.getValue());
+                    insert(et.getKey() , title_counter , s.link , (float) et.getValue().size() / wordsCount , et.getValue());
                 }
 
                 synchronized (insertLock){

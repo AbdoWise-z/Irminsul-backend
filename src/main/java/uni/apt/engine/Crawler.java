@@ -4,7 +4,6 @@ import com.google.search.robotstxt.Matcher;
 import com.google.search.robotstxt.Parser;
 import com.google.search.robotstxt.RobotsParseHandler;
 import com.google.search.robotstxt.RobotsParser;
-import com.mongodb.client.MongoCollection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -162,17 +161,17 @@ public class Crawler{
                 finishCount++;
 
                 if (finishCount == threadCount){
-                    meta.insertOne(new org.bson.Document().append("obj-id" , "crawler-meta").append("websites" , _websiteCount));
+                    OnlineDB.MetaDB.insertOne(new org.bson.Document().append("obj-id" , "crawler-meta").append("websites" , _websiteCount));
                     LinkedList<org.bson.Document> docs = new LinkedList<>();
                     for (Map.Entry<String , Integer> ent : popMap.entrySet()){
-                        org.bson.Document doc = linksPopularity.findOneAndDelete(new org.bson.Document("link" , ent.getKey()));
+                        org.bson.Document doc = OnlineDB.RankerPopularityDB.findOneAndDelete(new org.bson.Document("link" , ent.getKey()));
                         Integer pop = ent.getValue();
                         if (doc != null){
                             pop += doc.getInteger("mentions");
                         }
                         docs.add(new org.bson.Document().append("link" , ent.getKey()).append("mentions" , pop));
                     }
-                    linksPopularity.insertMany(docs);
+                    OnlineDB.RankerPopularityDB.insertMany(docs);
                 }
             }
 
@@ -254,10 +253,10 @@ public class Crawler{
         org.bson.Document item = new org.bson.Document();
         item.put("link" , str);
         item.put("body" , page_src);
-        item.put("title" , doc.select("title"));
+        item.put("title" , doc.select("title").text());
 
         synchronized (onlineLock){
-            results.insertOne(item); //snd the object to the db
+            OnlineDB.CrawlerCrawledDB.insertOne(item); //snd the object to the db
         }
     }
 
@@ -292,9 +291,6 @@ public class Crawler{
         currentActive = new String[thread_count];
     }
 
-    private MongoCollection<org.bson.Document> results;
-    private MongoCollection<org.bson.Document> meta;
-    private MongoCollection<org.bson.Document> linksPopularity;
     private final HashMap<String , Integer> popMap = new HashMap<>();
     private int _websiteCount = 0;
     public synchronized void start(int limit , Queue<String> seed , LinkedList<String> visitedPagesLog){
@@ -314,11 +310,7 @@ public class Crawler{
 
         force_stop = false;
 
-        results         =  OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_CRAWLED);
-        meta            =  OnlineDB.base.getCollection(Defaults.DB_META);
-        linksPopularity =  OnlineDB.base.getCollection(Defaults.RANKER_POPULARITY_DB);
-
-        org.bson.Document m = meta.findOneAndDelete(new org.bson.Document().append("obj-id" , "crawler-meta"));
+        org.bson.Document m = OnlineDB.MetaDB.findOneAndDelete(new org.bson.Document().append("obj-id" , "crawler-meta"));
         _websiteCount = (m != null) ? m.getInteger("websites") : 0;
 
 

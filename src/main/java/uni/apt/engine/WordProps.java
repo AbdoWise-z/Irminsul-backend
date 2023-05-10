@@ -9,5 +9,7 @@ public class WordProps{ //struct
 
     public ArrayList<Float> TFs = new ArrayList<>();
 
+    public ArrayList<Long> titleIds = new ArrayList<>();
+
     //IDF == storage.getNumWebsites() / links.size();
 }

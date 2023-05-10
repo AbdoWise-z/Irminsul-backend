@@ -69,7 +69,7 @@ public class CrawlerMain {
         if (seed == null){
             //load the seed from DB
             log.i("Loading the seed from DB ...");
-            MongoCollection<Document> docs = OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_SEEDS);
+            MongoCollection<Document> docs = OnlineDB.base.getCollection(Defaults.CRAWLER_SEEDS);
             FindIterable<Document> seeds = docs.find();
             seed = new LinkedList<>();
             for (Document doc : seeds){
@@ -87,7 +87,7 @@ public class CrawlerMain {
 
         if (str.equalsIgnoreCase("y") || str.equalsIgnoreCase("yes")){
             log.i("Loading old log ..");
-            MongoCollection<Document> docs = OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_LOG);
+            MongoCollection<Document> docs = OnlineDB.base.getCollection(Defaults.CRAWLER_VISITED_LOG);
             FindIterable<Document> visited_log = docs.find();
             for (Document doc : visited_log){
                 String link = doc.getString("link");
@@ -97,10 +97,10 @@ public class CrawlerMain {
             log.i("done");
         }else{
             log.i("Clearing ..");
-            OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_LOG).drop();
-            OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_SEEDS).drop();
-            OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_CRAWLED).drop();
-            OnlineDB.base.getCollection(Defaults.DB_META).findOneAndDelete(new org.bson.Document().append("obj-id" , "crawler-meta"));
+            OnlineDB.base.getCollection(Defaults.CRAWLER_VISITED_LOG).drop();
+            OnlineDB.base.getCollection(Defaults.CRAWLER_SEEDS).drop();
+            OnlineDB.base.getCollection(Defaults.CRAWLER_CRAWLED).drop();
+            OnlineDB.base.getCollection(Defaults.META_DB).findOneAndDelete(new org.bson.Document().append("obj-id" , "crawler-meta"));
             log.i("Done");
         }
 
@@ -145,7 +145,7 @@ public class CrawlerMain {
         seed = crawler.getCurrentSeed();
         visitedPages = (LinkedList<String>) crawler.getVisitedPages();
 
-        MongoCollection<Document> seeds = OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_SEEDS);
+        MongoCollection<Document> seeds = OnlineDB.base.getCollection(Defaults.CRAWLER_SEEDS);
         String s;
         while ((s = seed.poll()) != null){
             seeds.insertOne(new Document().append("link" , s));
@@ -153,7 +153,7 @@ public class CrawlerMain {
 
         log.i("seeds done , sending visited log");
 
-        MongoCollection<Document> visited = OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_LOG);
+        MongoCollection<Document> visited = OnlineDB.base.getCollection(Defaults.CRAWLER_VISITED_LOG);
         visited.drop(); //clear the db first
                         //TODO: maybe I should just insert after the last loaded link from the visited log instead
 

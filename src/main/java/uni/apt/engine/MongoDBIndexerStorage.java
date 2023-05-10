@@ -1,7 +1,5 @@
 package uni.apt.engine;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoIterable;
 import org.bson.Document;
 import uni.apt.Defaults;
 import uni.apt.core.Log;
@@ -13,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MongoDBIndexerStorage implements IndexerStorage{
-    private MongoCollection<Document> index;
-    private MongoCollection<Document> meta;
     private final LinkedHashMap<String , WordProps> cache = new LinkedHashMap<>();
     private int numWebsites = 0;
 
@@ -33,7 +29,7 @@ public class MongoDBIndexerStorage implements IndexerStorage{
 
         log.i("Starting meta");
 
-        meta.insertOne(new Document().append("obj-id" , "indexer-meta").append("websites" , numWebsites));
+        OnlineDB.MetaDB.insertOne(new Document().append("obj-id" , "indexer-meta").append("websites" , numWebsites));
 
         log.i("Finished");
 
@@ -53,6 +49,7 @@ public class MongoDBIndexerStorage implements IndexerStorage{
                 Document it = new Document();
                 it.put("link" , props.links.get(i));
                 it.put("TF" , props.TFs.get(i));
+                it.put("title" , props.titleIds.get(i));
                 List<WordRecord> records = props.indices.get(i);
                 List<Document> record = new LinkedList<>();
                 for (WordRecord w : records) {
@@ -74,7 +71,7 @@ public class MongoDBIndexerStorage implements IndexerStorage{
             insert.add(doc);
         }
 
-        index.insertMany(insert);
+        OnlineDB.IndexerDB.insertMany(insert);
 
 
         log.i("Clearing mem");
@@ -87,11 +84,9 @@ public class MongoDBIndexerStorage implements IndexerStorage{
             return false;
 
 
-        index = OnlineDB.base.getCollection(id);
-        meta  = OnlineDB.base.getCollection(Defaults.DB_META);
         cache.clear();
 
-        Document m = meta.findOneAndDelete(new Document().append("obj-id" , "indexer-meta"));
+        Document m = OnlineDB.MetaDB.findOneAndDelete(new Document().append("obj-id" , "indexer-meta"));
         numWebsites = (m != null) ? m.getInteger("websites") : 0;
 
         return true;
@@ -104,7 +99,7 @@ public class MongoDBIndexerStorage implements IndexerStorage{
             return cache_ret;
 
 
-        Document doc = index.findOneAndDelete(new Document().append("word" , word));
+        Document doc = OnlineDB.IndexerDB.findOneAndDelete(new Document().append("word" , word));
 
         if (doc != null){
             WordProps props = new WordProps();
@@ -112,6 +107,7 @@ public class MongoDBIndexerStorage implements IndexerStorage{
             for (Document d : records){
                 props.links.add(d.getString("link"));
                 props.TFs.add(((Double) d.get("TF")).floatValue());
+                props.titleIds.add(d.getLong("title"));
                 List<Document> wProps = d.getList("records" , Document.class);
                 List<WordRecord> record = new LinkedList<>();
 
@@ -143,8 +139,8 @@ public class MongoDBIndexerStorage implements IndexerStorage{
     @Override
     public void clear() {
         cache.clear();
-        index.drop();
-        meta.findOneAndDelete(new Document().append("obj-id" , "indexer-meta"));
+        OnlineDB.IndexerDB.drop();
+        OnlineDB.MetaDB.findOneAndDelete(new Document().append("obj-id" , "indexer-meta"));
     }
 
 
