@@ -1,16 +1,14 @@
 package uni.apt;
 
 import uni.apt.core.Log;
-import uni.apt.engine.Indexer;
-import uni.apt.engine.IndexerIO;
 
-public class EngineMain {
-
-    private static final Log log = Log.getLog(EngineMain.class);
+public class RankerMain {
     private static void printf(String str , Object... args){
         System.out.printf(str , args);
     }
+    private static final Log log = Log.getLog(RankerMain.class);
 
     public static void main(String[] args){
+
     }
 }

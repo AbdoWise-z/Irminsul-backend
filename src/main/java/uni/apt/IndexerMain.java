@@ -4,6 +4,7 @@ import uni.apt.core.Log;
 import uni.apt.core.OnlineDB;
 import uni.apt.engine.Indexer;
 import uni.apt.engine.IndexerIO;
+import uni.apt.engine.MongoDBIndexerStorage;
 
 import java.io.File;
 import java.util.Scanner;
@@ -30,20 +31,16 @@ public class IndexerMain {
         }
 
 
-        Indexer indexer = new Indexer(num_threads);
+        Indexer indexer = new Indexer(num_threads , new MongoDBIndexerStorage());
 
         log.i("Indexer started");
-        if (new File(Defaults.INDEXER_LOCAL_FILE).exists())
-            indexer.start(Defaults.INDEXER_LOCAL_FILE);
-        else {
-            OnlineDB.base.getCollection(Defaults.INDEXER_INDEXED_PARAGRAPHS).drop(); //delete the old data if any
-            indexer.start(null);
-        }
+        indexer.start(Defaults.INDEXER_MONGO_NAME);
+
 
         while (indexer.isRunning()){}
         log.i("Indexer Finished");
 
-        IndexerIO.WriteToFile(Defaults.INDEXER_LOCAL_FILE , indexer);
+        indexer.getStorage().save(null);
 
         log.w("Finished");
     }

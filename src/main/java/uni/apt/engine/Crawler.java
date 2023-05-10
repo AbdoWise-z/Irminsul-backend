@@ -117,7 +117,6 @@ public class Crawler{
                                 text.append(l);
                             }
 
-
                             matcher = p.parse(text.toString().getBytes(StandardCharsets.UTF_8));
 
                             if (matcher == null)
@@ -161,6 +160,20 @@ public class Crawler{
 
             synchronized (finishCountLock){
                 finishCount++;
+
+                if (finishCount == threadCount){
+                    meta.insertOne(new org.bson.Document().append("obj-id" , "crawler-meta").append("websites" , _websiteCount));
+                    LinkedList<org.bson.Document> docs = new LinkedList<>();
+                    for (Map.Entry<String , Integer> ent : popMap.entrySet()){
+                        org.bson.Document doc = linksPopularity.findOneAndDelete(new org.bson.Document("link" , ent.getKey()));
+                        Integer pop = ent.getValue();
+                        if (doc != null){
+                            pop += doc.getInteger("mentions");
+                        }
+                        docs.add(new org.bson.Document().append("link" , ent.getKey()).append("mentions" , pop));
+                    }
+                    linksPopularity.insertMany(docs);
+                }
             }
 
             logger.println("Finished");
@@ -173,6 +186,13 @@ public class Crawler{
     private final Object addLock = new Object();
     private void addLink(String str){
         synchronized (addLock){
+
+            Integer pop = popMap.get(str);
+            if (pop == null)
+                pop = 0;
+            pop++;
+            popMap.put(str , pop);
+            _websiteCount++;
 
             if (toBeSearched.contains(str))
                 return;
@@ -218,14 +238,12 @@ public class Crawler{
     private final Object onlineLock = new Object();
     private void markFinish(int id , String str , Document doc){
         synchronized (finishLock){
-//            if (visitedPagesLog.contains(str)) {  //will never happen
-//                log.w("Page already crawled : " + str);
-//                return;
-//            }
             crawledCount++;
             visitedPagesLog.add(str);
 
             currentActive[id] = null;
+
+            _websiteCount++;
 
             log.i("Finished: " + str + " [" + crawledCount + "]");
         }
@@ -236,6 +254,7 @@ public class Crawler{
         org.bson.Document item = new org.bson.Document();
         item.put("link" , str);
         item.put("body" , page_src);
+        item.put("title" , doc.select("title"));
 
         synchronized (onlineLock){
             results.insertOne(item); //snd the object to the db
@@ -274,6 +293,10 @@ public class Crawler{
     }
 
     private MongoCollection<org.bson.Document> results;
+    private MongoCollection<org.bson.Document> meta;
+    private MongoCollection<org.bson.Document> linksPopularity;
+    private final HashMap<String , Integer> popMap = new HashMap<>();
+    private int _websiteCount = 0;
     public synchronized void start(int limit , Queue<String> seed , LinkedList<String> visitedPagesLog){
         if (isRunning())
             throw new IllegalStateException("already running");
@@ -287,9 +310,18 @@ public class Crawler{
             toBeSearched = seed;
         }
 
+        popMap.clear();
+
         force_stop = false;
 
-        results = OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_CRAWLED);
+        results         =  OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_CRAWLED);
+        meta            =  OnlineDB.base.getCollection(Defaults.DB_META);
+        linksPopularity =  OnlineDB.base.getCollection(Defaults.RANKER_POPULARITY_DB);
+
+        org.bson.Document m = meta.findOneAndDelete(new org.bson.Document().append("obj-id" , "crawler-meta"));
+        _websiteCount = (m != null) ? m.getInteger("websites") : 0;
+
+
 
         this.visitedPagesLog.clear();
 

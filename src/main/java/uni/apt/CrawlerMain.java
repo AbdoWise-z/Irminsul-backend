@@ -100,6 +100,7 @@ public class CrawlerMain {
             OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_LOG).drop();
             OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_SEEDS).drop();
             OnlineDB.base.getCollection(Defaults.CRAWLER_COLLECTION_CRAWLED).drop();
+            OnlineDB.base.getCollection(Defaults.DB_META).findOneAndDelete(new org.bson.Document().append("obj-id" , "crawler-meta"));
             log.i("Done");
         }
 
