@@ -47,6 +47,7 @@ public class MongoDBIndexerStorage implements IndexerStorage{
         for (Map.Entry<String , WordProps> ent : cache.entrySet()){
             Document doc = new Document();
             doc.put("word" , ent.getKey());
+            doc.put("stemmed" , ent.getValue().stemmed);
             log.i("Saving: " + ent.getKey());
             WordProps props = ent.getValue();
             List<Document> mentions = new LinkedList<>();
@@ -117,6 +118,8 @@ public class MongoDBIndexerStorage implements IndexerStorage{
         if (doc != null){
             WordProps props = new WordProps();
             List<Document> records = doc.getList("mentions" , Document.class);
+            props.stemmed = doc.getString("stemmed");
+
             for (Document d : records){
                 props.links.add(d.getString("link"));
                 props.TFs.add(((Double) d.get("TF")).floatValue());
