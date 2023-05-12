@@ -196,7 +196,7 @@ public class Ranker {
     }
 
 
-    private static class PhraseSearchRankerThread<T> extends Thread implements RankerSearchThread {
+    private static class PhraseSearchRankerThread extends Thread implements RankerSearchThread {
         private final List<String> words;
         private final List<SearchResult> results;
         private final Class<? extends Thread> clazz;
@@ -280,26 +280,13 @@ public class Ranker {
 
 
                     for (int j = 0; j < result.wordIndex.size(); j++) {
-                        List<Integer> para = inter.wordsMapping.get(result.paragraphIndex.get(j));
-                        if (para == null){
-                            para = new ArrayList<>(results.length);
+                        List<List<Integer>> para = inter.wordsMapping.computeIfAbsent(result.paragraphIndex.get(j), k -> new ArrayList<>());
+                        List<Integer> positions = para.size() > i ? para.get(i) : null;
+                        if (positions == null){
+                            positions = new LinkedList<>();
+                            para.add(positions);
                         }
-
-                        Integer pos = para.size() > i ? para.get(i) : null;
-                        if (pos == null){
-                            para.add(result.wordIndex.get(j));
-
-                        }else{
-                            if (i != 0){
-                                Integer prev = para.get(i - 1);
-                                if (prev > pos){
-                                    if (result.wordIndex.get(j) > prev){
-                                        para.set(i , result.wordIndex.get(j));
-                                    }
-                                }
-                            }
-                        }
-                        inter.wordsMapping.put(result.paragraphIndex.get(j) , para);
+                        positions.add(result.wordIndex.get(j));
                     }
 
                     temp.put(result.link, inter);
@@ -323,29 +310,10 @@ public class Ranker {
                 result.tag            = new ArrayList<>();
                 result.type           = new ArrayList<>();
 
-                for (Map.Entry<Long , List<Integer>> mapItem : res.wordsMapping.entrySet()){
-                    int _last = -1;
-                    long paraID = mapItem.getKey();
-                    List<Integer> indexes = mapItem.getValue();
-                    boolean ok = false;
-                    if (indexes.size() == words.size()) {
-                        ok = true;
-                        for (int x : indexes) {
-                            if (_last < 0) {
-                                _last = x;
-                            } else if (x < _last || x - _last > 1) {
-                                ok = false;
-                                break;
-                            }
-                            _last = x;
-                        }
-                    }
+                for (Map.Entry<Long , List<List<Integer>>> mapItem : res.wordsMapping.entrySet()){
+                    List<List<Integer>> indexes = mapItem.getValue();
+                    if (indexes.size() == words.size()){
 
-                    if (ok){
-                        result.wordIndex.add(indexes.get(0));
-                        result.tag.add(0);  // just a const for now
-                        result.type.add(1); //
-                        result.paragraphIndex.add(paraID);
                     }
                 }
 
@@ -356,6 +324,10 @@ public class Ranker {
         }
     }
 
+    private static int getOrder(List<List<Integer>> indexes , int posX){
+
+    }
+
     static class IntermediatePhraseSearchResult {
         float TF;
         float IDF;
@@ -363,6 +335,6 @@ public class Ranker {
 
         long titleID;
 
-        Map<Long , List<Integer>> wordsMapping;
+        Map<Long , List< List<Integer>> > wordsMapping;
     }
 }

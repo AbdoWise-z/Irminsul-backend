@@ -35,7 +35,7 @@ public class MongoSearchThread extends Thread implements RankerSearchThread{
         if (!strict) {
             stemmer.setCurrent(_word);
             stemmer.stem();
-            matcher = new Document("word", new Document("$regex", Pattern.compile("" + stemmer.getCurrent() + "(?i)")));
+            matcher = new Document("word", new Document("$regex", Pattern.compile(_word + "(?i)")));
         }
         else
             matcher = new Document("word", new Document("$regex", Pattern.compile("^" + _word + "$(?i)")));

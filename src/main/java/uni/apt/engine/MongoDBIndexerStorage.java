@@ -5,14 +5,12 @@ import uni.apt.Defaults;
 import uni.apt.core.Log;
 import uni.apt.core.OnlineDB;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MongoDBIndexerStorage implements IndexerStorage{
-    private final LinkedHashMap<String , WordProps> cache = new LinkedHashMap<>();
-    private static final int CACHE_LIMIT = 15000;
+    private static final int CACHE_LIMIT = 4000;
+    private final HashMap<String , WordProps> cache = new HashMap<>();
+    private final ArrayList<Document> cache_sender = new ArrayList<>(CACHE_LIMIT);
     //ok , I'll try a new caching plan , hope it works ..
     private int numWebsites = 0;
 
@@ -42,7 +40,6 @@ public class MongoDBIndexerStorage implements IndexerStorage{
     }
 
     private void clearCache(){
-        LinkedList<Document> insert = new LinkedList<>();
 
         for (Map.Entry<String , WordProps> ent : cache.entrySet()){
             Document doc = new Document();
@@ -74,20 +71,18 @@ public class MongoDBIndexerStorage implements IndexerStorage{
             //Document matcher = new Document().append("word" , ent.getKey());
             //index.deleteOne(matcher);
 
-            insert.add(doc);
-
-//            if (insert.size() > 1000){ //send to the db in batches of 1000 records
-//                OnlineDB.IndexerDB.insertMany(insert);
-//                insert.clear();
-//            }
+            cache_sender.add(doc);
         }
 
-        if (insert.size() > 0)
-            OnlineDB.IndexerDB.insertMany(insert);
+        if (cache_sender.size() > 0)
+            OnlineDB.IndexerDB.insertMany(cache_sender);
 
 
         log.i("Clearing mem");
         cache.clear();
+        cache_sender.clear();
+
+        Runtime.getRuntime().gc();
     }
 
     @Override
@@ -150,7 +145,7 @@ public class MongoDBIndexerStorage implements IndexerStorage{
     public void set(String word, WordProps props) {
         synchronized (mapLock) {
             cache.put(word, props);
-            if (cache.size() > CACHE_LIMIT)
+            if (cache.size() >= CACHE_LIMIT)
                 clearCache();
         }
 

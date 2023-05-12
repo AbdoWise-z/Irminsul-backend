@@ -21,7 +21,7 @@ public class RankerMain {
         OnlineDB.init();
 
         Ranker ranker = new Ranker();
-        List< Ranker.SearchResult> result = ranker.search("genshin impact", MongoSearchThread.class, new RankerScoreCalculator() {
+        List< Ranker.SearchResult> result = ranker.search("Google", MongoSearchThread.class, new RankerScoreCalculator() {
             @Override
             public float getScore(float tf, float IDF, float wordsMatch, float orderScore, float popularity) {
                 if (tf > 0.6) { // a spam page
