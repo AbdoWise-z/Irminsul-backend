@@ -5,11 +5,6 @@ import java.util.List;
 
 public interface IndexerStorage {
 
-    class SearchResult{
-        float match_factor;
-        WordProps props;
-    }
-
     /**
      * saves this indexer storage to the database (local or online)
      * with a specific id
@@ -70,5 +65,4 @@ public interface IndexerStorage {
      *                  if threshold <= 0 then it will return the entire db
      * @return List of items matching that word
      * */
-    List<SearchResult> search(String word , float threshold);
 }

@@ -27,7 +27,7 @@ public class Crawler{
 
     public static final Log log = Log.getLog(Crawler.class);
     static {
-        log.setEnabled(true);
+        log.setEnabled(false);
     }
 
     private Queue<String> toBeSearched;
@@ -193,6 +193,7 @@ public class Crawler{
             popMap.put(str , pop);
             _websiteCount++;
 
+
             if (toBeSearched.contains(str))
                 return;
 
@@ -213,6 +214,7 @@ public class Crawler{
 //                    return;
 //                }
 //            }
+
 
             toBeSearched.add(str);
             //log.i(Thread.currentThread().getName() , "Added: " + str);
@@ -241,8 +243,6 @@ public class Crawler{
             visitedPagesLog.add(str);
 
             currentActive[id] = null;
-
-            _websiteCount++;
 
             log.i("Finished: " + str + " [" + crawledCount + "]");
         }

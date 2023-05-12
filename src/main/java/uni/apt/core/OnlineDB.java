@@ -1,11 +1,10 @@
 package uni.apt.core;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import org.bson.Document;
 import uni.apt.Defaults;
+
+import java.util.HashMap;
 
 public class OnlineDB {
     public static MongoClient client;
@@ -55,6 +54,23 @@ public class OnlineDB {
     public static MongoCollection<Document> RankerSuggestionsDB;
 
 
+    private static HashMap<String , Integer> Popularises;
+    private static final Object getPopularityLock = new Object();
+    public static int getPopularity(String link){
+        synchronized (getPopularityLock) {
+            if (Popularises == null) {
+                Popularises = new HashMap<>();
+                MongoIterable<Document> docs = RankerPopularityDB.find();
+                for (Document d : docs){
+                    Popularises.put(d.getString("link") , d.getInteger("mentions" , -2));
+                }
+            }
+        }
 
+        Integer i = Popularises.get(link);
+        if (i == null)
+            return 0;
+        return i;
+    }
 
 }

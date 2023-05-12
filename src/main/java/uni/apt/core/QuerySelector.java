@@ -2,18 +2,20 @@ package uni.apt.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class QuerySelector {
-    private List<String> words;
+    private final List<String> words;
 
     public QuerySelector() {
         words = new ArrayList<>();
     }
 
-    public void addWord(String word) {
+    public QuerySelector addWord(String word) {
         words.add(word);
+        return this;
     }
 
     public List<String> getWords() {
@@ -46,4 +48,18 @@ public class QuerySelector {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        QuerySelector selector = (QuerySelector) o;
+
+        return Objects.equals(words, selector.words);
+    }
+
+    @Override
+    public int hashCode() {
+        return words != null ? words.hashCode() : 0;
+    }
 }

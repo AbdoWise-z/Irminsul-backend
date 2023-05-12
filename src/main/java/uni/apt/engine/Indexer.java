@@ -4,6 +4,7 @@ import com.mongodb.client.MongoIterable;
 import org.bson.Document;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import org.tartarus.snowball.ext.PorterStemmer;
 import uni.apt.Defaults;
 import uni.apt.core.Log;
 import uni.apt.core.OnlineDB;
@@ -55,12 +56,17 @@ public class Indexer {
 
         WordProps props;
 
-        synchronized (insertLock){
+        //synchronized (insertLock){
             props = storage.get(word);
-        }
+        //}
 
-        if (props == null)
+        if (props == null) {
             props = new WordProps();
+            PorterStemmer stemmer = new PorterStemmer();
+            stemmer.setCurrent(word);
+            stemmer.stem();
+            props.stemmed = stemmer.getCurrent();
+        }
 
         int idx = props.links.indexOf(link);
         if (idx > 0){
@@ -76,9 +82,9 @@ public class Indexer {
         props.TFs.add(tf);
         props.titleIds.add(title);
 
-        synchronized (insertLock){
+        //synchronized (insertLock){
             storage.set(word , props);
-        }
+        //}
 
         synchronized (activeLick){
             currentActive.remove(word); //allow other threads to use it
@@ -177,6 +183,9 @@ public class Indexer {
                     for (String word : ws){
                         word = Trim(word);
 
+                        wordsCount++; //take account for arabic words
+                                      //because trimming removes them
+
                         if (word == null) continue;
                         if (word.length() < 3) continue; //a , an and garbage letters
                         boolean skip = false;
@@ -188,7 +197,6 @@ public class Indexer {
                         }
                         if (skip) continue;
 
-                        wordsCount++;
 
                         WordRecord idx = new WordRecord();
                         idx.type = (tagName.equals("div") || tagName.equals("p")) ? WordRecord.PARAGRAPH : WordRecord.HEADER;
@@ -208,7 +216,7 @@ public class Indexer {
                     if (wordIndex != 0) { //if we didn't add any words then skip this paragraph
                         synchronized (paragraphLock) {
                             OnlineDB.ParagraphsDB.insertOne(new Document().append("text", text).append("index", paragraph_counter));
-                            paragraphMapping.put(tagIndex , paragraph_counter - 1);
+                            paragraphMapping.put(tagIndex , paragraph_counter);
                             paragraph_counter++;
                         }
                     }
@@ -227,7 +235,7 @@ public class Indexer {
                 for (Map.Entry<String , List<WordRecord>> et : words.entrySet()){
                     for (WordRecord w : et.getValue()){
                         //un-map the paragraph index
-                        w.paragraphIndex = paragraphMapping.getOrDefault(w.tagIndex , (long) -1); //-1 == error
+                        w.paragraphIndex = paragraphMapping.getOrDefault(w.tagIndex , (long) -2); //-2 == error
                     }
                     insert(et.getKey() , titleId , s.link , (float) et.getValue().size() / wordsCount , et.getValue());
                 }

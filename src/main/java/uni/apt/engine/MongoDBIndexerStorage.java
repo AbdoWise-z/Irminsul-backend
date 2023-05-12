@@ -12,9 +12,14 @@ import java.util.Map;
 
 public class MongoDBIndexerStorage implements IndexerStorage{
     private final LinkedHashMap<String , WordProps> cache = new LinkedHashMap<>();
+    private static final int CACHE_LIMIT = 15000;
+    //ok , I'll try a new caching plan , hope it works ..
     private int numWebsites = 0;
 
     private static final Log log = Log.getLog(MongoDBIndexerStorage.class);
+    static {
+        log.setEnabled(false);
+    }
 
     @Override
     public boolean save(String id) {
@@ -70,11 +75,12 @@ public class MongoDBIndexerStorage implements IndexerStorage{
 
             insert.add(doc);
 
-            if (insert.size() > 500){
-                OnlineDB.IndexerDB.insertMany(insert);
-                insert.clear();
-            }
+//            if (insert.size() > 1000){ //send to the db in batches of 1000 records
+//                OnlineDB.IndexerDB.insertMany(insert);
+//                insert.clear();
+//            }
         }
+
         if (insert.size() > 0)
             OnlineDB.IndexerDB.insertMany(insert);
 
@@ -88,7 +94,6 @@ public class MongoDBIndexerStorage implements IndexerStorage{
         if (!OnlineDB.ready())
             return false;
 
-
         cache.clear();
 
         Document m = OnlineDB.MetaDB.findOneAndDelete(new Document().append("obj-id" , "indexer-meta"));
@@ -97,11 +102,14 @@ public class MongoDBIndexerStorage implements IndexerStorage{
         return true;
     }
 
+    private final Object mapLock = new Object();
     @Override
     public WordProps get(String word) {
-        WordProps cache_ret = cache.get(word);
-        if (cache_ret != null)
-            return cache_ret;
+        synchronized (mapLock) {
+            WordProps cache_ret = cache.remove(word);
+            if (cache_ret != null)
+                return cache_ret;
+        }
 
 
         Document doc = OnlineDB.IndexerDB.findOneAndDelete(new Document().append("word" , word));
@@ -128,17 +136,46 @@ public class MongoDBIndexerStorage implements IndexerStorage{
                 props.indices.add(record);
             }
 
-            cache.put(word , props);
+            //cache.put(word , props);
 
             return props;
         }
-
         return null;
     }
 
     @Override
     public void set(String word, WordProps props) {
-        cache.put(word , props);
+        synchronized (mapLock) {
+            cache.put(word, props);
+            if (cache.size() > CACHE_LIMIT)
+                clearCache();
+        }
+
+//        Document doc = new Document();
+//        doc.put("word" , word);
+//        log.i("Saving: " + word);
+//        List<Document> mentions = new LinkedList<>();
+//        for (int i = 0; i < props.links.size(); i++) {
+//            Document it = new Document();
+//            it.put("link" , props.links.get(i));
+//            it.put("TF" , props.TFs.get(i));
+//            it.put("title" , props.titleIds.get(i));
+//            List<WordRecord> records = props.indices.get(i);
+//            List<Document> record = new LinkedList<>();
+//            for (WordRecord w : records) {
+//                record.add(new Document()
+//                        .append("type" , w.type)
+//                        .append("paragraphIndex" , w.paragraphIndex)
+//                        .append("pos" , w.pos)
+//                        .append("tagIndex" , w.tagIndex)
+//                );
+//            }
+//            it.put("records" , record);
+//            mentions.add(it);
+//        }
+//        doc.put("mentions" , mentions);
+//
+//        OnlineDB.IndexerDB.insertOne(doc);
     }
 
     @Override
@@ -157,10 +194,5 @@ public class MongoDBIndexerStorage implements IndexerStorage{
     @Override
     public void setNumWebsites(int nnw) {
         numWebsites = nnw;
-    }
-
-    @Override
-    public List<SearchResult> search(String word, float threshold) {
-        return null;
     }
 }
