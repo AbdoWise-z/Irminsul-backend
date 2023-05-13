@@ -5,16 +5,15 @@ import org.bson.Document;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.tartarus.snowball.ext.PorterStemmer;
-import uni.apt.Defaults;
 import uni.apt.core.Log;
 import uni.apt.core.OnlineDB;
+import uni.apt.core.QuerySelector;
 
 import java.util.*;
-import java.util.regex.Pattern;
+
+import static uni.apt.core.QuerySelector.Trim;
 
 public class Indexer {
-
-
 
     public static final Log log = Log.getLog(Indexer.class);
     private final int threadCount;
@@ -60,8 +59,7 @@ public class Indexer {
             props = storage.get(word);
         //}
 
-        if (props == null) {
-            props = new WordProps();
+        if (!props._indexerCreated) {
             PorterStemmer stemmer = new PorterStemmer();
             stemmer.setCurrent(word);
             stemmer.stem();
@@ -149,7 +147,6 @@ public class Indexer {
         }
     }
 
-    private static final String[] RemoveWords = {"and" , "the"};
     class IndexerThread extends Thread{
         private IndexerThread(String n){
             setName(n);
@@ -186,16 +183,7 @@ public class Indexer {
                         wordsCount++; //take account for arabic words
                                       //because trimming removes them
 
-                        if (word == null) continue;
-                        if (word.length() < 3) continue; //a , an and garbage letters
-                        boolean skip = false;
-                        for (String str : RemoveWords){
-                            if (str.equals(word)) {
-                                skip = true;
-                                break;
-                            }
-                        }
-                        if (skip) continue;
+                        if (!QuerySelector.isWordAllowed(word)) continue;
 
 
                         WordRecord idx = new WordRecord();
@@ -253,40 +241,6 @@ public class Indexer {
         }
     }
 
-    private static final String[] TrimCharsStart = {"," , "." , "/" , "\\" , "|" , ">" , "<" , "?" , "'" , "\"" , ":"};
-    private static final String[] TrimCharsEnd = {"," , "." , "/" , "\\" , "|" , ">" , "<" , "?" , "'" , "\"" , ":" , "'r" , "'s" , "'re"};
-    private static String Trim(String s){
-        s = s.trim();
-
-        boolean done;
-        do{
-            done = true;
-            for (String ch : TrimCharsStart){
-                if (s.startsWith(ch)){
-                    s = s.substring(ch.length());
-                    done = false;
-                }
-            }
-        } while (!done);
-
-        do{
-            done = true;
-            for (String ch : TrimCharsEnd){
-                if (s.endsWith(ch)){
-                    s = s.substring(0 , s.length() - ch.length());
-                    done = false;
-                }
-            }
-        } while (!done);
-
-        Pattern pt = Pattern.compile("^[a-zA-Z0-9\\-]*$");
-        if (!pt.matcher(s).matches()){
-            return null;
-        }
-
-
-        return s;
-    }
 
 
     public IndexerStorage getStorage() {

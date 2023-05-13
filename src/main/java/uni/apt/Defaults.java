@@ -18,8 +18,9 @@ public class Defaults {
     public static final String INDEXER_INDEXED_PARAGRAPHS = "indexer-paragraphs";
     public static final String INDEXER_INDEXED_TITLES = "indexer-titles";
 
-    //public static final String INDEXER_LOCAL_FILE = "base.bidx";
-    public static final String INDEXER_MONGO_NAME = "indexer-data";
+    public static final String INDEXER_MONGO_WORDS = "indexer-data-words";
+    public static final String INDEXER_MONGO_LINKS = "indexer-data-links";
+    public static final String INDEXER_MONGO_RECORDS = "indexer-data-records";
 
     //Ranker stuff
     public static final String RANKER_POPULARITY_DB = "ranker-pop-db";

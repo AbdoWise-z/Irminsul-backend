@@ -3,10 +3,8 @@ package uni.apt;
 import uni.apt.core.Log;
 import uni.apt.core.OnlineDB;
 import uni.apt.engine.Indexer;
-import uni.apt.engine.IndexerIO;
-import uni.apt.engine.MongoDBIndexerStorage;
+import uni.apt.engine.MongoIndexerStorage;
 
-import java.io.File;
 import java.util.Scanner;
 
 public class IndexerMain {
@@ -31,10 +29,10 @@ public class IndexerMain {
         }
 
 
-        Indexer indexer = new Indexer(num_threads , new MongoDBIndexerStorage());
+        Indexer indexer = new Indexer(num_threads , new MongoIndexerStorage());
 
         log.i("Indexer started");
-        indexer.start(Defaults.INDEXER_MONGO_NAME);
+        indexer.start(null);
 
 
         while (indexer.isRunning()){}

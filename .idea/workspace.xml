@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="apt-prject:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="added phrase search">
+    <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="finish without bounc">
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/apt_prject_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/out/artifacts/apt_prject_jar/apt-prject.jar" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
@@ -13,13 +22,31 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/MongoDBIndexerStorage.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/MongoDBIndexerStorage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/Defaults.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/Defaults.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/IndexerMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/IndexerMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/RankerMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/RankerMain.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/OnlineDB.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/OnlineDB.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Indexer$IndexerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Indexer$IndexerThread.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Indexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Indexer.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/MongoDBIndexerStorage.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/MongoSearchThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/MongoSearchThread.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$IntermediatePhraseSearchResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$IntermediatePhraseSearchResult.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$PhraseSearchRankerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$PhraseSearchRankerThread.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/WordProps.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/WordProps.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/test.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/test.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/Defaults.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/Defaults.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/IndexerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/IndexerMain.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/RankerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/RankerMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/MongoDBIndexerStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/MongoDBIndexerStorage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/core/OnlineDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/core/OnlineDB.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/core/QuerySelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/core/QuerySelector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Indexer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Indexer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/MongoDBIndexerStorage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/MongoIndexerStorage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/MongoSearchThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/MongoSearchThread.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/WordProps.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/WordProps.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,25 +65,31 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2PfAPxZkCeOLzwmA1jd9p08lhAg" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/sdk/Java/lucene-core-9.6.0.jar&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.3264368&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Downloaded.Files.Path.Enabled": "false",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last.edited.regexp": "\"Abdo\" OR \"Botato\"",
+    "last_opened_file_path": "C:/sdk/Java/lucene-core-9.6.0.jar",
+    "project.structure.last.edited": "Artifacts",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.3264368"
   }
-}</component>
-  <component name="RunManager" selected="Application.IndexerMain">
+}]]></component>
+  <component name="RunManager" selected="Application.RankerMain">
     <configuration name="CrawlerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="uni.apt.CrawlerMain" />
       <module name="apt-prject.main" />
@@ -70,7 +103,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="IndexerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="IndexerMain" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="uni.apt.IndexerMain" />
       <module name="apt-prject.main" />
       <extension name="coverage">
@@ -111,7 +144,6 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.IndexerMain" />
         <item itemvalue="Application.CrawlerMain" />
         <item itemvalue="Application.test" />
         <item itemvalue="Application.RankerMain" />
@@ -148,7 +180,14 @@
       <option name="project" value="LOCAL" />
       <updated>1683907810128</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="added phrase search">
+      <created>1683918621177</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1683918621177</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -163,16 +202,18 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="added phrase search" />
-    <option name="LAST_COMMIT_MESSAGE" value="added phrase search" />
+    <MESSAGE value="finish without bounc" />
+    <option name="LAST_COMMIT_MESSAGE" value="finish without bounc" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java</url>
-          <line>183</line>
-          <option name="timeStamp" value="10" />
+          <url>file://$PROJECT_DIR$/src/main/java/uni/apt/engine/MongoSearchThread.java</url>
+          <line>28</line>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

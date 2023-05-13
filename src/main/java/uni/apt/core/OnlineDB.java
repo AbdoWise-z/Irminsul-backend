@@ -23,7 +23,10 @@ public class OnlineDB {
             client.close(); //close the connection on shutdown
         }));
 
-        IndexerDB           = base.getCollection(Defaults.INDEXER_MONGO_NAME);
+        IndexerWordsDB      = base.getCollection(Defaults.INDEXER_MONGO_WORDS);
+        IndexerRecordsDB    = base.getCollection(Defaults.INDEXER_MONGO_RECORDS);
+        IndexerLinksDB      = base.getCollection(Defaults.INDEXER_MONGO_LINKS);
+
         RankerSuggestionsDB = base.getCollection(Defaults.RANKER_SUGGESTIONS_DB);
         RankerPopularityDB  = base.getCollection(Defaults.RANKER_POPULARITY_DB);
         ParagraphsDB        = base.getCollection(Defaults.INDEXER_INDEXED_PARAGRAPHS);
@@ -46,7 +49,10 @@ public class OnlineDB {
     public static MongoCollection<Document> CrawlerSeedsDB;
     public static MongoCollection<Document> CrawlerCrawledDB;
 
-    public static MongoCollection<Document> IndexerDB;
+    public static MongoCollection<Document> IndexerWordsDB;
+    public static MongoCollection<Document> IndexerLinksDB;
+    public static MongoCollection<Document> IndexerRecordsDB;
+
     public static MongoCollection<Document> ParagraphsDB;
     public static MongoCollection<Document> TitlesDB;
 
@@ -71,6 +77,24 @@ public class OnlineDB {
         if (i == null)
             return 0;
         return i;
+    }
+
+    public static String getParagraph(long id){
+        FindIterable<Document> doc = ParagraphsDB.find(new Document("index" , id));
+        Document para = doc.first();
+        if (para != null){
+            return para.getString("text");
+        }
+        return null;
+    }
+
+    public static String getTitle(long id){
+        FindIterable<Document> doc = TitlesDB.find(new Document("index" , id));
+        Document para = doc.first();
+        if (para != null){
+            return para.getString("text");
+        }
+        return null;
     }
 
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WordProps{ //struct
+    long _indexerWordID;
+    boolean _indexerCreated;
     public String stemmed;
     public ArrayList<String> links = new ArrayList<>();
     public ArrayList<List<WordRecord>> indices = new ArrayList<>();

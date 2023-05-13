@@ -30,18 +30,25 @@ public class QuerySelector {
 
         while (matcher.find()) {
             String match = matcher.group(1);
+            QuerySelector querySelector = new QuerySelector();
+
             if (match.startsWith("\"") && match.endsWith("\"")) {
-                QuerySelector querySelector = new QuerySelector();
                 String[] words = match.substring(1, match.length() - 1).split("\\s+");
                 for (String word : words) {
+                    word = Trim(word);
+
+                    if (!isWordAllowed(word)) continue;
+
                     querySelector.addWord(word);
                 }
-                querySelectors.add(querySelector);
             } else {
-                QuerySelector querySelector = new QuerySelector();
-                querySelector.addWord(match);
-                querySelectors.add(querySelector);
+                match = Trim(match);
+                if (isWordAllowed(match))
+                    querySelector.addWord(match);
             }
+
+            if (querySelector.words.size() > 0)
+                querySelectors.add(querySelector);
         }
 
         return querySelectors;
@@ -60,6 +67,54 @@ public class QuerySelector {
 
     @Override
     public int hashCode() {
-        return words != null ? words.hashCode() : 0;
+        return words.hashCode();
     }
+
+    private static final String[] TrimCharsStart = {"," , "." , "/" , "\\" , "|" , ">" , "<" , "?" , "'" , "\"" , ":"};
+    private static final String[] TrimCharsEnd = {"," , "." , "/" , "\\" , "|" , ">" , "<" , "?" , "'" , "\"" , ":" , "'r" , "'s" , "'re" , "'ll" , "n't"};
+    public static String Trim(String s){
+        s = s.trim();
+
+        boolean done;
+        do{
+            done = true;
+            for (String ch : TrimCharsStart){
+                if (s.startsWith(ch)){
+                    s = s.substring(ch.length());
+                    done = false;
+                }
+            }
+        } while (!done);
+
+        do{
+            done = true;
+            for (String ch : TrimCharsEnd){
+                if (s.endsWith(ch)){
+                    s = s.substring(0 , s.length() - ch.length());
+                    done = false;
+                }
+            }
+        } while (!done);
+
+        Pattern pt = Pattern.compile("^[a-zA-Z0-9\\-]*$");
+        if (!pt.matcher(s).matches()){
+            return null;
+        }
+
+
+        return s;
+    }
+
+    private static final String[] RemoveWords = {"and" , "the"};
+    public static boolean isWordAllowed(String word){
+        if (word == null) return false;
+        if (word.length() < 3) return false; //a , an and garbage letters
+        for (String str : RemoveWords){
+            if (str.equals(word)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

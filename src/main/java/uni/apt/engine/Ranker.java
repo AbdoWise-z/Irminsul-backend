@@ -1,9 +1,11 @@
 package uni.apt.engine;
 
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.bson.Document;
 import uni.apt.RankerMain;
 import uni.apt.core.InversionCounter;
 import uni.apt.core.Log;
+import uni.apt.core.OnlineDB;
 import uni.apt.core.QuerySelector;
 
 import java.lang.reflect.Constructor;
@@ -23,7 +25,7 @@ public class Ranker {
         public float IDF;
         public float popularity;
 
-        public ArrayList<Integer> tag;
+        //public ArrayList<Integer> tag;
         public ArrayList<Integer> wordIndex;
 
         //stuff for the display
@@ -38,18 +40,23 @@ public class Ranker {
 
     public static class FinalSearchResult{
         public String link;
-        public int paragraphID;
-        public int titleID;
+        public long paragraphID;
+        public long titleID;
         public float score;
     }
 
-    public List<SearchResult> search(String query , Class<? extends Thread> threadClass , RankerScoreCalculator calculator){
+    public List<FinalSearchResult> search(String query , Class<? extends Thread> threadClass , RankerScoreCalculator calculator){
 
         if (!RankerSearchThread.class.isAssignableFrom(threadClass)){
             throw new IllegalArgumentException("threadClass must implement RankerSearchThread");
         }
 
         List<QuerySelector> selectors = QuerySelector.parseString(query);
+
+        if (selectors.size() == 0){
+            return new ArrayList<>(); //so the user didn't search for anything
+                                      //IDK what to do , but I'll just return empty array for now
+        }
 
         List<RankerSearchThread> searchResults = new LinkedList<>();
         for (QuerySelector s : selectors){
@@ -107,7 +114,7 @@ public class Ranker {
         String link; //we stay null until we start sorting
     }
 
-    private List<SearchResult> _rankResults(List<SearchResult>[] results , RankerScoreCalculator calc){
+    private List<FinalSearchResult> _rankResults(List<SearchResult>[] results , RankerScoreCalculator calc){
         HashMap<String , IntermediateSearchResult> temp = new HashMap<>();
         for (int i = 0;i < results.length;i++){
             for (SearchResult result : results[i]){
@@ -123,9 +130,9 @@ public class Ranker {
                 }
 
                 float match_factor = (float) (1.0 - (LevenshteinDistance.getDefaultInstance().apply(result.originalWord , result.word) / (float) Math.max(result.word.length() , result.originalWord.length())));
-                if (match_factor < 0.85f)
-                    match_factor = 0; //if a website contains too many similar words to the search word , then it will skyrocket its score
-                                      //to avoid that , I clip the match_factor for less similar words
+                if (match_factor < 0.8f)
+                    match_factor = (float) Math.pow(match_factor , 2); //if a website contains too many similar words to the search word , then it will skyrocket its score
+                                                     //to avoid that , I clip the match_factor for less similar words
 
                 inter.IDF += result.IDF * match_factor;
                 inter.TF  += result.TF * match_factor;
@@ -162,9 +169,10 @@ public class Ranker {
 
         //now we have all the data ready , time to rank them up
 
-        ArrayList<IntermediateSearchResult> toBeSorted = new ArrayList<>(temp.size());
+        ArrayList<FinalSearchResult> toBeSorted = new ArrayList<>(temp.size());
         for (Map.Entry<String , IntermediateSearchResult> res : temp.entrySet()){
             res.getValue().link = res.getKey();
+            //res.getValue().IDF = (float) indexerWebsites / temp.size();
 
             for (Map.Entry<Long, ParagraphMatching> para : res.getValue().paragraphMatching.entrySet()) {
                 float s = calc.getScore(res.getValue().TF, res.getValue().IDF, para.getValue().wordsMatching, CalculateOrderValue(para.getValue()), res.getValue().popularity);
@@ -173,15 +181,24 @@ public class Ranker {
                     res.getValue().highestScoreParagraph = para.getKey();
                 }
             }
+
             res.getValue().paragraphMatching.clear();
             res.getValue().paragraphMatching = null; //release mem
 
-            toBeSorted.add(res.getValue());
+            FinalSearchResult add = new FinalSearchResult();
+            add.score = res.getValue()._score;
+            add.link = res.getValue().link;
+            add.paragraphID = res.getValue().highestScoreParagraph;
+            add.titleID = res.getValue().titleId;
+
+            toBeSorted.add(add);
         }
 
-        toBeSorted.sort((o1, o2) -> -Float.compare(o1._score, o2._score));
+        if (toBeSorted.size() > 1)
+            toBeSorted.sort((o1, o2) -> -Float.compare(o1.score, o2.score));
 
-        return null;
+
+        return toBeSorted;
     }
 
     private static float CalculateOrderValue(ParagraphMatching para){
@@ -271,16 +288,16 @@ public class Ranker {
                         inter.popularity = result.popularity;
                         inter.titleID = result.titleIndex;
 
-                        inter.TF = 0.59f;
+                        inter.TF = 1.0f;
                         inter.wordsMapping = new HashMap<>();
                     }
 
                     inter.IDF = Math.max(result.IDF , inter.IDF);
                     inter.TF  = Math.min(result.TF  , inter.TF );
 
-
                     for (int j = 0; j < result.wordIndex.size(); j++) {
-                        List<List<Integer>> para = inter.wordsMapping.computeIfAbsent(result.paragraphIndex.get(j), k -> new ArrayList<>());
+                        int finalJ = j;
+                        List<List<Integer>> para = inter.wordsMapping.computeIfAbsent(result.paragraphIndex.get(j), k -> new ParagraphInfo(result.type.get(finalJ))).words;
                         List<Integer> positions = para.size() > i ? para.get(i) : null;
                         if (positions == null){
                             positions = new LinkedList<>();
@@ -293,6 +310,8 @@ public class Ranker {
                 }
             }
 
+            int indexerWebsites = OnlineDB.MetaDB.find(new Document("obj-id" , "indexer-meta")).first().getInteger("websites");
+
             for (Map.Entry<String , IntermediatePhraseSearchResult> ent : temp.entrySet()){
                 SearchResult result = new SearchResult();
                 IntermediatePhraseSearchResult res = ent.getValue();
@@ -301,19 +320,25 @@ public class Ranker {
                 result.word = phrase.toString();
                 result.originalWord = result.word;
                 result.TF = res.TF;
-                result.IDF = res.IDF;
+                result.IDF = (float) indexerWebsites / temp.size();
                 result.titleIndex = res.titleID;
                 result.popularity = res.popularity;
 
                 result.paragraphIndex = new ArrayList<>();
                 result.wordIndex      = new ArrayList<>();
-                result.tag            = new ArrayList<>();
+                //result.tag            = new ArrayList<>();
                 result.type           = new ArrayList<>();
 
-                for (Map.Entry<Long , List<List<Integer>>> mapItem : res.wordsMapping.entrySet()){
-                    List<List<Integer>> indexes = mapItem.getValue();
+                for (Map.Entry<Long , ParagraphInfo> mapItem : res.wordsMapping.entrySet()){
+                    List<List<Integer>> indexes = mapItem.getValue().words;
                     if (indexes.size() == words.size()){
-
+                        int index = getOrder(indexes , 0 , -1);
+                        if (index > 0){
+                            result.paragraphIndex.add(mapItem.getKey());
+                            result.wordIndex.add(index);
+                            result.type.add(mapItem.getValue().type);
+                            //result.tag.add(0);
+                        }
                     }
                 }
 
@@ -324,8 +349,33 @@ public class Ranker {
         }
     }
 
-    private static int getOrder(List<List<Integer>> indexes , int posX){
+    private static int getOrder(List<List<Integer>> indexes , int posX , int prev){
+        if (posX == indexes.size())
+            return 1;
 
+        List<Integer> selections = indexes.get(posX);
+        for (Integer i : selections){
+            if (i - prev == 1 || posX == 0){
+                int k = getOrder(indexes , posX + 1 , i);
+                if (k > 0){
+                    if (posX == 0){ //first call
+                        return i;
+                    }
+                    return 1;
+                }
+            }
+        }
+
+        return -1;
+    }
+
+    static class ParagraphInfo{
+        List<List<Integer>> words = new ArrayList<>();
+        int type;
+
+        public ParagraphInfo(int type){
+            this.type = type;
+        }
     }
 
     static class IntermediatePhraseSearchResult {
@@ -335,6 +385,6 @@ public class Ranker {
 
         long titleID;
 
-        Map<Long , List< List<Integer>> > wordsMapping;
+        Map<Long , ParagraphInfo> wordsMapping;
     }
 }
