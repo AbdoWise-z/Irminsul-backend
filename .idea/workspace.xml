@@ -10,66 +10,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="finish without bounce">
-      <change afterPath="$PROJECT_DIR$/src/main/java/uni/apt/ServerMain.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/TestHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/sha1-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/Translate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/Matcher.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/Matcher.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/MatchingStrategy.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/MatchingStrategy.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/ParseException.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/ParseException.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/ParseHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/ParseHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/Parser$DirectiveType.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/Parser$DirectiveType.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/Parser.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/Parser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsContents$Group$Rule.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsContents$Group$Rule.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsContents$Group.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsContents$Group.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsContents.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsContents.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsLongestMatchStrategy.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsLongestMatchStrategy.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsMatcher$Match.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsMatcher$Match.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsMatcher.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsMatcher.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsParseHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsParseHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsParser.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/com/google/search/robotstxt/RobotsParser.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/CrawlerMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/CrawlerMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/EngineMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/EngineMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/IndexerMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/IndexerMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/RankerMain$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/RankerMain$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/RankerMain.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/RankerMain.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/InversionCounter.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/InversionCounter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/Log.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/Log.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/OnlineDB.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/OnlineDB.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/QuerySelector.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/QuerySelector.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/TrendArrayMap$Entry.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/TrendArrayMap$Entry.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/TrendArrayMap.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/TrendArrayMap.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler$CrawlerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler$CrawlerThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Indexer$IndexerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Indexer$IndexerThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Indexer.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Indexer.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/IndexerStorage.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/IndexerStorage.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/MongoSearchThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/MongoSearchThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$IntermediatePhraseSearchResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$IntermediatePhraseSearchResult.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$IntermediateSearchResult.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$IntermediateSearchResult.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$ParagraphMatching.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$ParagraphMatching.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$PhraseSearchRankerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker$PhraseSearchRankerThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/RankerScoreCalculator.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/RankerScoreCalculator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/RankerSearchThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/RankerSearchThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/test.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/test.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/RankerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/RankerMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/core/OnlineDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/core/OnlineDB.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/RankerScoreCalculator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/RankerScoreCalculator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/TestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/TestHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,23 +51,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;Downloaded.Files.Path.Enabled&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Annotations&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.JavaDocs&quot;: &quot;false&quot;,
-    &quot;Repository.Attach.Sources&quot;: &quot;false&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;last.edited.regexp&quot;: &quot;\&quot;Abdo\&quot; OR \&quot;Botato\&quot;&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/sdk/Java/lucene-core-9.6.0.jar&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Artifacts&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.3264368&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Downloaded.Files.Path.Enabled": "false",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "last.edited.regexp": "",
+    "last_opened_file_path": "C:/sdk/Java/lucene-core-9.6.0.jar",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.3264368"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Application.ServerMain">
     <configuration name="CrawlerMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="uni.apt.CrawlerMain" />
@@ -252,7 +201,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684006918615</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="finish without bounce">
+      <created>1684053201792</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1684053201792</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

@@ -32,7 +32,7 @@ public class SearchHandler {
 //                        return -0.5f;
 //                    }
 
-                return tfIDF * wordsMatch * 10 + orderScore * wordsMatch * 100.0f + popularity * 120;
+                return tfIDF * wordsMatch * 10 + orderScore * wordsMatch * 100.0f + popularity * 10;
             }
 
             @Override
