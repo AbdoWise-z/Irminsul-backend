@@ -9,9 +9,10 @@ import java.util.Map;
 
 @RestController
 public class TestHandler {
-
+    static int id = 0;
     @GetMapping("/test")
     public String lol(@RequestParam Map<String,String> allRequestParams, ModelMap model){
+        System.out.println("Request received " + (id++) + "\n");
         return "get gud: " + allRequestParams.get("q");
     }
 }
