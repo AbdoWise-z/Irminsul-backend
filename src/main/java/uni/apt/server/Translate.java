@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import org.bson.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,6 +58,7 @@ public class Translate {
         @JsonSerialize(using = BooleanListSerializer.class)
         List<Boolean> bold = new LinkedList<>();
 
+        @JsonSerialize(using = StringSerializer.class)
         String title;
     }
 
@@ -87,12 +89,15 @@ public class Translate {
     }
 
     private static TranslatedDocument handle(BsonDocument doc , List<QuerySelector> selector){
+        System.out.println("Processing: " + doc);
         IndeterminateTranslatedDocument temp = new IndeterminateTranslatedDocument();
         temp.boldRanges = new ArrayList<>();
         temp.paragraph = OnlineDB.getParagraph(doc.getInt32("paragraphID").getValue());
         for (QuerySelector q : selector){
             handle(q , temp);
         }
+
+        System.out.println("Handle finished");
 
         TranslatedDocument ret = new TranslatedDocument();
         ret.title = OnlineDB.getParagraph(doc.getInt32("titleID").getValue());
@@ -180,21 +185,27 @@ public class Translate {
             ret.paragraphs.add(temp.paragraph.substring(0 , Math.min(temp.paragraph.length() , 60)));
         }
 
-
+        System.out.println("Done");
 
         return ret;
     }
 
     private static void handle(QuerySelector s , IndeterminateTranslatedDocument doc){
-        StringBuilder match = new StringBuilder(s.getWords().get(0).toLowerCase());
+
+        StringBuilder match = new StringBuilder(s.getWords().get(0));
         for (int i = 1; i < s.getWords().size(); i++) {
-            match.append(" ").append(s.getWords().get(i).toLowerCase());
+            match.append(" ").append(s.getWords().get(i));
         }
 
-        Pattern pattern = Pattern.compile("(" + match.toString() + ")" , Pattern.CASE_INSENSITIVE);
+        System.out.println("Handle:" + match + " , doc: " + doc.toString() );
+
+        Pattern pattern = Pattern.compile("(" + match + ")" , Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(doc.paragraph);
         while (matcher.find()){
             doc.boldRanges.add(new Range(matcher.start(), matcher.end()));
         }
+
+        System.out.println("done");
+
     }
 }
