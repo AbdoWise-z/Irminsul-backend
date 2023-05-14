@@ -51,6 +51,9 @@ public class Translate {
         List<Range> boldRanges;
     }
 
+    public static final int PARA_SIZE = 160;
+    public static final int TITLE_MAX_SIZE = 80;
+
 
     public static class TranslatedDocument implements Serializable {
         @JsonSerialize(using = StringListSerializer.class)
@@ -93,6 +96,26 @@ public class Translate {
         IndeterminateTranslatedDocument temp = new IndeterminateTranslatedDocument();
         temp.boldRanges = new ArrayList<>();
         temp.paragraph = OnlineDB.getParagraph(doc.getInt32("paragraphID").getValue());
+        int lID = doc.getInt32("paragraphID").getValue() - 1;
+        int hID = doc.getInt32("paragraphID").getValue() + 1;
+
+//        while (temp.paragraph.length() < PARA_SIZE * 2){
+//            String l = OnlineDB.getParagraph(lID);
+//            String h = OnlineDB.getParagraph(hID);
+//            if (l != null)
+//                temp.paragraph = l + " " + temp.paragraph;
+//            if (h != null)
+//                temp.paragraph = temp.paragraph + " " + h;
+//
+//            lID--;
+//            hID++;
+//
+//            if (l == null && h == null)
+//                break;
+//        }
+
+        System.out.println("temp.paragraph=" + temp.paragraph);
+
         for (QuerySelector q : selector){
             handle(q , temp);
         }
@@ -100,7 +123,12 @@ public class Translate {
         System.out.println("Handle finished");
 
         TranslatedDocument ret = new TranslatedDocument();
-        ret.title = OnlineDB.getParagraph(doc.getInt32("titleID").getValue());
+        ret.title = OnlineDB.getTitle(doc.getInt32("titleID").getValue());
+        if (ret.title.length() > TITLE_MAX_SIZE){
+            ret.title = ret.title.substring(0 , TITLE_MAX_SIZE);
+            ret.title += "..";
+        }
+        System.out.println("Title: " + ret.title);
 
         if (temp.boldRanges.size() > 0) {
             int avg = 0;
@@ -138,8 +166,8 @@ public class Translate {
 
             //take only 120 chars from the paragraph (at most)
             int l = temp.paragraph.length();
-            int sub_start = Math.max(0 , start - 60);
-            int sub_end   = Math.min(l , start + 60);
+            int sub_start = Math.max(0 , start - PARA_SIZE);
+            int sub_end   = Math.min(l , start + PARA_SIZE);
 
             temp.paragraph = temp.paragraph.substring(sub_start , sub_end);
 
@@ -186,6 +214,9 @@ public class Translate {
         }
 
         System.out.println("Done");
+        for (String s : ret.paragraphs){
+            System.out.println(s);
+        }
 
         return ret;
     }
