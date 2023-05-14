@@ -95,21 +95,19 @@ public class Ranker {
     }
 
     private static class ParagraphMatching{
-        float wordsMatching;
-        List<Integer> wordsMapping;
+        float[] wordsMatching;
+        List<List<Integer>> wordsMapping;
         //used to calculate the order score
     }
 
     private static class IntermediateSearchResult{
-        float TF;
-        float IDF;
+        float tfIDF;
         float popularity;
 
         long highestScoreParagraph = -1;
         float _score = -1;
 
         Map<Long , ParagraphMatching> paragraphMatching; //<id , value>
-
         long titleId;
         String link; //we stay null until we start sorting
     }
@@ -119,47 +117,41 @@ public class Ranker {
         for (int i = 0;i < results.length;i++){
             for (SearchResult result : results[i]){
                 IntermediateSearchResult inter = temp.get(result.link);
+
                 if (inter == null){ //init it
                     inter = new IntermediateSearchResult();
                     inter.popularity = result.popularity;
                     inter.titleId = result.titleIndex;
-                    inter.IDF = 0;
-                    inter.TF = 0;
+                    inter.tfIDF = 0;
                     inter.link = null;
                     inter.paragraphMatching = new HashMap<>();
                 }
 
                 float match_factor = (float) (1.0 - (LevenshteinDistance.getDefaultInstance().apply(result.originalWord , result.word) / (float) Math.max(result.word.length() , result.originalWord.length())));
-                if (match_factor < 0.8f)
+                if (match_factor < 0.7f)
                     match_factor = (float) Math.pow(match_factor , 2); //if a website contains too many similar words to the search word , then it will skyrocket its score
                                                      //to avoid that , I clip the match_factor for less similar words
 
-                inter.IDF += result.IDF * match_factor;
-                inter.TF  += result.TF * match_factor;
+                inter.tfIDF += result.IDF * result.TF * match_factor;
 
                 for (int j = 0; j < result.wordIndex.size(); j++) {
+
                     ParagraphMatching para = inter.paragraphMatching.get(result.paragraphIndex.get(j));
                     if (para == null){
                         para = new ParagraphMatching();
-                        para.wordsMatching = 0;
+                        para.wordsMatching = new float[results.length];
                         para.wordsMapping = new ArrayList<>(results.length);
                     }
 
-                    para.wordsMatching += calc.getWordScore(result.originalWord , result.word , result.TF , result.type.get(j)) / results.length;
-                    Integer pos = para.wordsMapping.size() > i ? para.wordsMapping.get(i) : null;
-                    if (pos == null){
-                        para.wordsMapping.add(result.wordIndex.get(j));
-                    }else{
-                        if (i != 0){
-                            Integer prev = para.wordsMapping.get(i - 1);
-                            if (prev > pos){
-                                if (result.wordIndex.get(j) > prev){
-                                    para.wordsMapping.set(i , result.wordIndex.get(j));
-                                }
-                            }
-                        }
+                    para.wordsMatching[i] = Math.max(para.wordsMatching[i] , calc.getWordScore(result.originalWord , result.word , result.TF , result.type.get(j)) / results.length);
+
+                    while (para.wordsMapping.size() <= i){
+                        para.wordsMapping.add(new ArrayList<>());
                     }
-                    //para.wordsMapping.set(i , pos);
+
+                    List<Integer> positions = para.wordsMapping.get(i);
+                    positions.add(result.wordIndex.get(j));
+
                     inter.paragraphMatching.put(result.paragraphIndex.get(j) , para);
                 }
 
@@ -175,10 +167,15 @@ public class Ranker {
             //res.getValue().IDF = (float) indexerWebsites / temp.size();
 
             for (Map.Entry<Long, ParagraphMatching> para : res.getValue().paragraphMatching.entrySet()) {
-                float s = calc.getScore(res.getValue().TF, res.getValue().IDF, para.getValue().wordsMatching, CalculateOrderValue(para.getValue()), res.getValue().popularity);
+                float wM = 0;
+                for (float f : para.getValue().wordsMatching)
+                    wM += f;
+
+                float s = calc.getScore(res.getValue().tfIDF, wM, CalculateOrderValue(para.getValue()), res.getValue().popularity);
+
                 if (res.getValue()._score < s) {
-                    res.getValue()._score = s;
-                    res.getValue().highestScoreParagraph = para.getKey();
+                        res.getValue()._score = s;
+                        res.getValue().highestScoreParagraph = para.getKey();
                 }
             }
 
@@ -202,14 +199,8 @@ public class Ranker {
     }
 
     private static float CalculateOrderValue(ParagraphMatching para){
-        if (para.wordsMapping.size() == 1) return 0; //only one item , then the order is fine
-
-        double max_inversions = para.wordsMapping.size() * (para.wordsMapping.size() - 1) / 2.0;
-        int[] arr = new int[para.wordsMapping.size()];
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] = para.wordsMapping.get(i);
-        }
-        return (float) ((max_inversions - InversionCounter.countInversions(arr)) / max_inversions);
+        if (para.wordsMapping.size() <= 1) return 0; //only one item , then the order is fine
+        return (float) getOrder(para.wordsMapping , 0 , -1) / para.wordsMapping.size();
     }
 
 
@@ -298,11 +289,10 @@ public class Ranker {
                     for (int j = 0; j < result.wordIndex.size(); j++) {
                         int finalJ = j;
                         List<List<Integer>> para = inter.wordsMapping.computeIfAbsent(result.paragraphIndex.get(j), k -> new ParagraphInfo(result.type.get(finalJ))).words;
-                        List<Integer> positions = para.size() > i ? para.get(i) : null;
-                        if (positions == null){
-                            positions = new LinkedList<>();
-                            para.add(positions);
+                        while (para.size() <= i){
+                            para.add(new ArrayList<>());
                         }
+                        List<Integer> positions = para.get(i);
                         positions.add(result.wordIndex.get(j));
                     }
 
@@ -333,7 +323,7 @@ public class Ranker {
                     List<List<Integer>> indexes = mapItem.getValue().words;
                     if (indexes.size() == words.size()){
                         int index = getOrder(indexes , 0 , -1);
-                        if (index > 0){
+                        if (index == words.size()){
                             result.paragraphIndex.add(mapItem.getKey());
                             result.wordIndex.add(index);
                             result.type.add(mapItem.getValue().type);
@@ -351,22 +341,25 @@ public class Ranker {
 
     private static int getOrder(List<List<Integer>> indexes , int posX , int prev){
         if (posX == indexes.size())
-            return 1;
+            return 0;
 
         List<Integer> selections = indexes.get(posX);
+
+        if (selections.size() == 0){
+            return getOrder(indexes , posX + 1 , -1);
+        }
+
+        int m = 0;
         for (Integer i : selections){
-            if (i - prev == 1 || posX == 0){
-                int k = getOrder(indexes , posX + 1 , i);
-                if (k > 0){
-                    if (posX == 0){ //first call
-                        return i;
-                    }
-                    return 1;
-                }
+            int k = getOrder(indexes , posX + 1 , i);
+            if (i - prev == 1 || prev == -1){
+                m = Math.max(m , k + 1);
+            }else{
+                m = Math.max(m , k);
             }
         }
 
-        return -1;
+        return m;
     }
 
     static class ParagraphInfo{

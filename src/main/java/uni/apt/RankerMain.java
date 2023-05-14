@@ -27,11 +27,11 @@ public class RankerMain {
             String query = sr.nextLine();
             List<Ranker.FinalSearchResult> result = ranker.search(query, MongoSearchThread.class, new RankerScoreCalculator() {
                 @Override
-                public float getScore(float tf, float IDF, float wordsMatch, float orderScore, float popularity) {
+                public float getScore(float tfIDF, float wordsMatch, float orderScore, float popularity) {
 //                    if (tf > 0.6) { // a spam page
 //                        return -0.5f;
 //                    }
-                    return tf * IDF * wordsMatch * 0.25f + orderScore * 10.0f;
+                    return tfIDF * wordsMatch * 0.25f + orderScore * 10.0f;
                 }
 
                 @Override

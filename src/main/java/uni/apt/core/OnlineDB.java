@@ -1,7 +1,14 @@
 package uni.apt.core;
 
+import ch.qos.logback.classic.Logger;
 import com.mongodb.client.*;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import org.slf4j.LoggerFactory;
+
 import org.bson.Document;
+
 import uni.apt.Defaults;
 
 import java.util.HashMap;
@@ -15,6 +22,10 @@ public class OnlineDB {
 
 
     public static void init(){
+        LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+        Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");
+        rootLogger.setLevel(Level.WARN);
+
         client = MongoClients.create(Defaults.CONNECTION_STR);
 
         base = client.getDatabase(Defaults.BASE_NAME);

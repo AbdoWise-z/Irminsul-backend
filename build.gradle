@@ -1,9 +1,12 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.0.6'
+    id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group 'uni.apt'
 version '1.0-SNAPSHOT'
+sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
@@ -15,9 +18,14 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
     implementation 'org.jsoup:jsoup:1.15.4'
-    implementation 'org.mongodb:mongodb-driver-sync:4.9.1'
+    //implementation 'org.mongodb:mongodb-driver-sync:4.9.1'
     implementation 'org.apache.commons:commons-text:1.9'
     implementation group: 'org.apache.lucene', name: 'lucene-analyzers', version: '3.5.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter:2.5.0'
+    implementation('org.springframework.boot:spring-boot-starter-web')
+    implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
+
 }
 
 test {
