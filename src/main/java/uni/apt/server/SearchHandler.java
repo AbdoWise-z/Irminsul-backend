@@ -31,7 +31,6 @@ public class SearchHandler {
 //                    if (tf > 0.6) { // a spam page
 //                        return -0.5f;
 //                    }
-
                 return tfIDF * wordsMatch * 10 + orderScore * wordsMatch * 100.0f + popularity * 10;
             }
 

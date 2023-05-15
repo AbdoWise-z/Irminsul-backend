@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import org.bson.*;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RestController
-public class Translate {
+public class TranslateHandler {
 
     public static class StringListSerializer extends JsonSerializer<List<String>>{
         @Override
@@ -84,8 +83,8 @@ public class Translate {
 
         BsonArray arr = BsonArray.parse(data.getString("items").getValue());
 
-        for (int i = 0;i < arr.size();i++){
-            result.add(handle((BsonDocument) arr.get(i) , selector));
+        for (BsonValue bsonValue : arr) {
+            result.add(handle((BsonDocument) bsonValue, selector));
         }
 
         return result;
@@ -120,15 +119,17 @@ public class Translate {
             handle(q , temp);
         }
 
-        System.out.println("Handle finished");
+        //System.out.println("Handle finished");
 
         TranslatedDocument ret = new TranslatedDocument();
         ret.title = OnlineDB.getTitle(doc.getInt32("titleID").getValue());
+
         if (ret.title.length() > TITLE_MAX_SIZE){
             ret.title = ret.title.substring(0 , TITLE_MAX_SIZE);
             ret.title += "..";
         }
-        System.out.println("Title: " + ret.title);
+
+        //System.out.println("Title: " + ret.title);
 
         if (temp.boldRanges.size() > 0) {
             int avg = 0;
@@ -210,13 +211,23 @@ public class Translate {
             }
 
         }else{
-            ret.paragraphs.add(temp.paragraph.substring(0 , Math.min(temp.paragraph.length() , 60)));
+            int l = temp.paragraph.length();
+            int sub_start = 0;
+            int sub_end   = Math.min(l , PARA_SIZE);
+
+            temp.paragraph = temp.paragraph.substring(sub_start , sub_end);
+
+            if (sub_end != l)
+                temp.paragraph += "...";
+
+            ret.paragraphs.add(temp.paragraph);
+            ret.bold.add(false);
         }
 
-        System.out.println("Done");
-        for (String s : ret.paragraphs){
-            System.out.println(s);
-        }
+//        //System.out.println("Done");
+//        for (String s : ret.paragraphs){
+//            System.out.println(s);
+//        }
 
         return ret;
     }
@@ -228,15 +239,12 @@ public class Translate {
             match.append(" ").append(s.getWords().get(i));
         }
 
-        System.out.println("Handle:" + match + " , doc: " + doc.toString() );
+        //System.out.println("Handle:" + match + " , doc: " + doc.toString() );
 
         Pattern pattern = Pattern.compile("(" + match + ")" , Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(doc.paragraph);
         while (matcher.find()){
             doc.boldRanges.add(new Range(matcher.start(), matcher.end()));
         }
-
-        System.out.println("done");
-
     }
 }

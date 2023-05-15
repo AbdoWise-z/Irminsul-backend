@@ -1,6 +1,10 @@
 package uni.apt;
 
 
+import uni.apt.core.OnlineDB;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -34,12 +38,16 @@ public class test {
     }
 
     public static void main(String[] args){
-        List<List<Integer>> items = new LinkedList<>();
-        items.add(List.of());
-        items.add(List.of(4,2,10));
-        items.add(List.of(8,9));
-        items.add(List.of());
-        items.add(List.of(10,11));
-        System.out.println(getOrder(items , 0 , -1));
+        OnlineDB.init();
+        System.out.println("البتاع دا بيفهم عربي ؟");
+        String title = OnlineDB.getParagraph(12864);
+        System.out.println(title);
+
+        String utf8 = new String(title.getBytes( StandardCharsets.UTF_8) , StandardCharsets.UTF_16);
+        System.out.println(utf8);
+
+        if (title.contains("من")){
+            System.out.println("it does");
+        }
     }
 }

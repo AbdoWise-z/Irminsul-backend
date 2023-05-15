@@ -27,7 +27,7 @@ public class Crawler{
 
     public static final Log log = Log.getLog(Crawler.class);
     static {
-        log.setEnabled(false);
+        log.setEnabled(true);
     }
 
     private Queue<String> toBeSearched;
@@ -47,7 +47,6 @@ public class Crawler{
 
     class CrawlerThread extends Thread{
         private HashMap<String,String> cookies = new HashMap<>(); //empty
-        private byte[] buff = new byte[8 * 1024];
         private PrintWriter logger;
         private final int id;
         private CrawlerThread(String n , int id){
@@ -148,6 +147,7 @@ public class Crawler{
                         addLink(s);
                     }
 
+                    logger.println("writing in the db");
                     markFinish(id, link, doc);
                     logger.println("Finished link");
 
@@ -157,21 +157,26 @@ public class Crawler{
                 }
             }
 
+
             synchronized (finishCountLock){
                 finishCount++;
-
-                if (finishCount == threadCount){
-                    OnlineDB.MetaDB.insertOne(new org.bson.Document().append("obj-id" , "crawler-meta").append("websites" , _websiteCount));
-                    LinkedList<org.bson.Document> docs = new LinkedList<>();
-                    for (Map.Entry<String , Integer> ent : popMap.entrySet()){
-                        org.bson.Document doc = OnlineDB.RankerPopularityDB.findOneAndDelete(new org.bson.Document("link" , ent.getKey()));
-                        Integer pop = ent.getValue();
-                        if (doc != null){
-                            pop += doc.getInteger("mentions");
+                try {
+                    if (finishCount == threadCount) {
+                        log.i("writing meta");
+                        OnlineDB.MetaDB.insertOne(new org.bson.Document().append("obj-id", "crawler-meta").append("websites", _websiteCount));
+                        LinkedList<org.bson.Document> docs = new LinkedList<>();
+                        for (Map.Entry<String, Integer> ent : popMap.entrySet()) {
+                            org.bson.Document doc = OnlineDB.RankerPopularityDB.findOneAndDelete(new org.bson.Document("link", ent.getKey()));
+                            Integer pop = ent.getValue();
+                            if (doc != null) {
+                                pop += doc.getInteger("mentions");
+                            }
+                            docs.add(new org.bson.Document().append("link", ent.getKey()).append("mentions", pop));
                         }
-                        docs.add(new org.bson.Document().append("link" , ent.getKey()).append("mentions" , pop));
+                        OnlineDB.RankerPopularityDB.insertMany(docs);
                     }
-                    OnlineDB.RankerPopularityDB.insertMany(docs);
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
 
@@ -221,7 +226,7 @@ public class Crawler{
         }
     }
     private String getNext(int id){
-        if (crawledCount > LIMIT){
+        if (crawledCount >= LIMIT){
             return null;
         }
 
@@ -236,7 +241,6 @@ public class Crawler{
         }
     }
     private final Object finishLock = new Object();
-    private final Object onlineLock = new Object();
     private void markFinish(int id , String str , Document doc){
         synchronized (finishLock){
             crawledCount++;
@@ -248,16 +252,13 @@ public class Crawler{
         }
 
         String page_src = doc.select("body").html();
-        //log.i(page_src);
 
         org.bson.Document item = new org.bson.Document();
         item.put("link" , str);
         item.put("body" , page_src);
         item.put("title" , doc.select("title").text());
 
-        synchronized (onlineLock){
-            OnlineDB.CrawlerCrawledDB.insertOne(item); //snd the object to the db
-        }
+        OnlineDB.CrawlerCrawledDB.insertOne(item); //snd the object to the db
     }
 
     private boolean KeepRunning(){

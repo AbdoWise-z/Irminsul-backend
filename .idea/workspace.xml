@@ -9,18 +9,32 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="trollboot">
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/dependencies-accessors/dependencies-accessors.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
+    <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="finish without bounce">
+      <change afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SuggestionsHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_5_14_2023_3_55_PM__Changes_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_5_14_2023_3_55_PM__Changes_2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler$CrawlerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler$CrawlerThread.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/SearchHandler$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/SearchHandler$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/TestHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/TestHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/test.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/test.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/Translate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/Translate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Crawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Crawler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/Translate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/TranslateHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,6 +56,19 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">
+    <option name="selectedUrlAndAccountId">
+      <UrlAndAccount>
+        <option name="accountId" value="cf21e7e1-6bbc-4323-b75d-7df21cfc729f" />
+        <option name="url" value="https://github.com/AbdoWise-z/cmp2-apt-project.git" />
+      </UrlAndAccount>
+    </option>
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -68,7 +95,8 @@
     &quot;last_opened_file_path&quot;: &quot;C:/sdk/Java/lucene-core-9.6.0.jar&quot;,
     &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.3264368&quot;
+    &quot;project.structure.side.proportion&quot;: &quot;0.3264368&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
   }
 }</component>
   <component name="RunManager" selected="Application.ServerMain">
@@ -139,9 +167,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.test" />
         <item itemvalue="Application.ServerMain" />
         <item itemvalue="Application.CrawlerMain" />
-        <item itemvalue="Application.test" />
         <item itemvalue="Application.RankerMain" />
       </list>
     </recent_temporary>
@@ -231,6 +259,11 @@
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
+        <entry key="28115728-bf5d-4699-919f-dc2a4c1c7e7d">
+          <value>
+            <State />
+          </value>
+        </entry>
         <entry key="MAIN">
           <value>
             <State />

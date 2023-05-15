@@ -127,7 +127,7 @@ public class Ranker {
                     inter.paragraphMatching = new HashMap<>();
                 }
 
-                float match_factor = (float) (1.0 - (LevenshteinDistance.getDefaultInstance().apply(result.originalWord.toLowerCase() , result.word.toLowerCase()) / (float) Math.max(result.word.length() , result.originalWord.length())));
+                float match_factor = (float) (1.0 - (LevenshteinDistance.getDefaultInstance().apply(result.originalWord , result.word) / (float) Math.max(result.word.length() , result.originalWord.length())));
                 if (match_factor < 0.7f)
                     match_factor = (float) Math.pow(match_factor , 2); //if a website contains too many similar words to the search word , then it will skyrocket its score
                                                      //to avoid that , I clip the match_factor for less similar words
