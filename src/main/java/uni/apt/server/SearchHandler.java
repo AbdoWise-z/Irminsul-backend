@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 import uni.apt.ServerMain;
+import uni.apt.core.OnlineDB;
 import uni.apt.engine.MongoSearchThread;
 import uni.apt.engine.Ranker;
 import uni.apt.engine.RankerScoreCalculator;
@@ -24,7 +25,7 @@ public class SearchHandler {
         if (query == null){
             throw new HttpServerErrorException(HttpStatusCode.valueOf(502));
         }
-
+        OnlineDB.SuggestionInsert(query);
         return ServerMain.ranker.search(query, MongoSearchThread.class, new RankerScoreCalculator() {
             @Override
             public float getScore(float tfIDF, float wordsMatch, float orderScore, float popularity) {

@@ -1,17 +1,24 @@
 package uni.apt.core;
 
 import ch.qos.logback.classic.Logger;
+import com.mongodb.Block;
 import com.mongodb.client.*;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
+import org.bson.conversions.Bson;
 import org.slf4j.LoggerFactory;
 
 import org.bson.Document;
 
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.client.HttpServerErrorException;
 import uni.apt.Defaults;
-
+import java.util.ArrayList;
 import java.util.HashMap;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.inc;
 
 public class OnlineDB {
     public static MongoClient client;
@@ -46,7 +53,7 @@ public class OnlineDB {
         CrawlerLogDB        = base.getCollection(Defaults.CRAWLER_VISITED_LOG);
         CrawlerSeedsDB      = base.getCollection(Defaults.CRAWLER_SEEDS);
         CrawlerCrawledDB    = base.getCollection(Defaults.CRAWLER_CRAWLED);
-
+        RankerSuggestionsDB   = base.getCollection(Defaults.RANKER_SUGGESTIONS_DB);
         _ready = true;
     }
 
@@ -107,5 +114,36 @@ public class OnlineDB {
         }
         return null;
     }
-
+    public static void SuggestionInsert(String in)
+    {
+        FindIterable<Document> TempCheck = RankerSuggestionsDB.find(eq("Query",in));
+        if(TempCheck.first()==null)
+        {
+            Document Insertion = new Document("Query",in).append("Score",1);
+            RankerSuggestionsDB.insertOne(Insertion);
+        }
+        else
+        {
+            Bson filter = eq("Query",in);
+            Bson update = inc("Score",1);
+            RankerSuggestionsDB.updateOne(filter,update);
+        }
+    }
+    public static ArrayList<Document> FindSuggestions(String in)
+    {
+        FindIterable<Document> QueryResult;
+        Bson sort = new Document("Score",-1);
+        ArrayList<Document> Returned = new ArrayList<Document>();
+        if(in !="")
+        QueryResult  = RankerSuggestionsDB.find(new Document("text", new Document("$regex", '^'+in).append("$options", "i"))).sort(sort);
+        else
+        {
+            QueryResult=RankerSuggestionsDB.find().sort(sort);
+        }
+        if(QueryResult.first()!=null)
+        QueryResult.into(Returned);
+        else
+            throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
+        return Returned;
+    }
 }
