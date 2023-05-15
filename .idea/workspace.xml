@@ -9,32 +9,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="finish without bounce">
-      <change afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SuggestionsHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
+    <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="without SuggestionsHandler.java">
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_5_14_2023_3_55_PM__Changes_2.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_5_14_2023_3_55_PM__Changes_2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler$CrawlerThread.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler$CrawlerThread.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Crawler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/engine/Ranker.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/SearchHandler$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/SearchHandler$1.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/TestHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/TestHandler.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/test.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/test.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Crawler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Crawler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/engine/Ranker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/core/OnlineDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/core/OnlineDB.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/Translate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/TranslateHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/SuggestionsHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SuggestionsHandler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -253,7 +233,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684072720869</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="without SuggestionsHandler.java">
+      <created>1684164065539</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1684164065539</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -279,7 +266,8 @@
     <MESSAGE value="finish without bounce" />
     <MESSAGE value="wowowow" />
     <MESSAGE value="trollboot" />
-    <option name="LAST_COMMIT_MESSAGE" value="trollboot" />
+    <MESSAGE value="without SuggestionsHandler.java" />
+    <option name="LAST_COMMIT_MESSAGE" value="without SuggestionsHandler.java" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

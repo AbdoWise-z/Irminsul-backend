@@ -53,7 +53,7 @@ public class OnlineDB {
         CrawlerLogDB        = base.getCollection(Defaults.CRAWLER_VISITED_LOG);
         CrawlerSeedsDB      = base.getCollection(Defaults.CRAWLER_SEEDS);
         CrawlerCrawledDB    = base.getCollection(Defaults.CRAWLER_CRAWLED);
-        RankerSuggestionsDB   = base.getCollection(Defaults.RANKER_SUGGESTIONS_DB);
+
         _ready = true;
     }
 
@@ -133,17 +133,17 @@ public class OnlineDB {
     {
         FindIterable<Document> QueryResult;
         Bson sort = new Document("Score",-1);
-        ArrayList<Document> Returned = new ArrayList<Document>();
-        if(in !="")
-        QueryResult  = RankerSuggestionsDB.find(new Document("text", new Document("$regex", '^'+in).append("$options", "i"))).sort(sort);
-        else
-        {
+        ArrayList<Document> Returned = new ArrayList<>();
+
+        if(!in.equals(""))
+            QueryResult  = RankerSuggestionsDB.find(new Document("Query", new Document("$regex", '^'+in).append("$options", "i"))).sort(sort);
+        else {
             QueryResult=RankerSuggestionsDB.find().sort(sort);
         }
-        if(QueryResult.first()!=null)
-        QueryResult.into(Returned);
-        else
-            throw new HttpServerErrorException(HttpStatusCode.valueOf(500));
+
+        if(QueryResult.first() != null)
+            QueryResult.into(Returned);
+
         return Returned;
     }
 }

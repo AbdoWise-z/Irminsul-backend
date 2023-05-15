@@ -8,16 +8,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 import uni.apt.ServerMain;
+import uni.apt.core.Log;
 import uni.apt.core.OnlineDB;
 import uni.apt.engine.MongoSearchThread;
 import uni.apt.engine.Ranker;
 import uni.apt.engine.RankerScoreCalculator;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 public class SearchHandler {
+
+    private static final Log log = Log.getLog(SearchHandler.class);
 
     @GetMapping(value = {"/search/", "/search"})
     public List<Ranker.FinalSearchResult> search(@RequestParam Map<String,String> params, ModelMap model){
@@ -25,6 +29,13 @@ public class SearchHandler {
         if (query == null){
             throw new HttpServerErrorException(HttpStatusCode.valueOf(502));
         }
+
+        log.i("Searching for : " + query);
+
+        if (query.isEmpty()) {
+            return new ArrayList<>(); //return empty result for empty queries
+        }
+
         OnlineDB.SuggestionInsert(query);
         return ServerMain.ranker.search(query, MongoSearchThread.class, new RankerScoreCalculator() {
             @Override
