@@ -96,6 +96,9 @@ public class QuerySelector {
             }
         } while (!done);
 
+        /**
+         * @author MOA
+         * */
         Pattern pt = Pattern.compile("^[a-zA-Z0-9\\-]*$");
         if (!pt.matcher(s).matches()){
             return null;

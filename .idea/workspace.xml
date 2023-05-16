@@ -9,12 +9,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="without SuggestionsHandler.java">
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+    <list default="true" id="02825cee-3fca-46fd-b11a-69d7d1cfa9cd" name="Changes" comment="with SuggestionsHandler.java">
+      <change afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/ServerCfg.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/dependencies-accessors/dependencies-accessors.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/core/OnlineDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/core/OnlineDB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SearchHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/server/SuggestionsHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/server/SuggestionsHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/OnlineDB.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/core/OnlineDB.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/SearchHandler$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/SearchHandler$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/SearchHandler.class" beforeDir="false" afterPath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/SearchHandler.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate$BooleanListSerializer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate$IndeterminateTranslatedDocument.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate$Range.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate$StringListSerializer.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate$TranslatedDocument.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/uni/apt/server/Translate.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/ServerMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/ServerMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/uni/apt/core/QuerySelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/uni/apt/core/QuerySelector.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -240,7 +257,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684164065539</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="with SuggestionsHandler.java">
+      <created>1684192334873</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1684192334873</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -267,7 +291,8 @@
     <MESSAGE value="wowowow" />
     <MESSAGE value="trollboot" />
     <MESSAGE value="without SuggestionsHandler.java" />
-    <option name="LAST_COMMIT_MESSAGE" value="without SuggestionsHandler.java" />
+    <MESSAGE value="with SuggestionsHandler.java" />
+    <option name="LAST_COMMIT_MESSAGE" value="with SuggestionsHandler.java" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>
