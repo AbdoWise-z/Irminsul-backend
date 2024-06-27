@@ -199,6 +199,7 @@ For example, if you want to run the crawler, then you need to run the main funct
 #### Setting Up Server
 You can run SpringBot Server by simply running `ServerMain`.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
 ## Contributing
