@@ -190,7 +190,7 @@ public class Crawler{
     private final Object addLock = new Object();
     private void addLink(String str){
         synchronized (addLock){
-
+            if (str.contains("!twitter.com")) return;
             Integer pop = popMap.get(str);
             if (pop == null)
                 pop = 0;
@@ -313,8 +313,6 @@ public class Crawler{
 
         org.bson.Document m = OnlineDB.MetaDB.findOneAndDelete(new org.bson.Document().append("obj-id" , "crawler-meta"));
         _websiteCount = (m != null) ? m.getInteger("websites") : 0;
-
-
 
         this.visitedPagesLog.clear();
 

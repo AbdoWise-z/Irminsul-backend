@@ -44,7 +44,7 @@ public class CrawlerMain {
         while (true){
             String str = in.nextLine().trim();
             if (str.equals("exit")){
-                if (seed.size() == 0){
+                if (seed.isEmpty()){
                     printf("Type at least one seed link\n");
                     continue;
                 }else {
@@ -56,6 +56,8 @@ public class CrawlerMain {
                 seed = null;
                 break;
             }
+
+            if (str.isEmpty()) continue;
 
             if (!str.startsWith("https://"))
                 str = "https://" + str;
@@ -78,6 +80,7 @@ public class CrawlerMain {
                 seed.add(link);
             }
 
+            docs.drop();
             log.i("Seed loaded!");
         }
 

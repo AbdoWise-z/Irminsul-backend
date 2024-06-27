@@ -7,6 +7,7 @@ import com.mongodb.client.*;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import org.slf4j.LoggerFactory;
 
 import org.bson.Document;
@@ -25,9 +26,7 @@ public class OnlineDB {
     public static MongoDatabase base;
 
     private static boolean _ready = false;
-
-
-
+    
     public static void init(){
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         Logger rootLogger = loggerContext.getLogger("org.mongodb.driver");

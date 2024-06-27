@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import static uni.apt.core.InversionCounter.countInversions;
 
@@ -14,40 +15,53 @@ import static uni.apt.core.InversionCounter.countInversions;
 
 public class test {
 
-    private static int getOrder(List<List<Integer>> indexes , int posX , int prev){
-        if (posX == indexes.size())
-            return 0;
-
-        List<Integer> selections = indexes.get(posX);
-
-        if (selections.size() == 0){
-            return getOrder(indexes , posX + 1 , -1);
+    static void submit(float ans){
+        //System.out.println(ans);
+    }
+    static void solve(){
+        float start = 0;
+        float end = 1;
+        float dx = 0.00001f;
+        float x = start;
+        while (x <= end){
+            submit(x);
+            x += dx;
         }
-
-        int m = 0;
-        for (Integer i : selections){
-            int k = getOrder(indexes , posX + 1 , i);
-            if (i - prev == 1 || prev == -1){
-                m = Math.max(m , k + 1);
-            }else{
-                m = Math.max(m , k);
-            }
-        }
-
-        return m;
     }
 
+
     public static void main(String[] args){
-        OnlineDB.init();
-        System.out.println("البتاع دا بيفهم عربي ؟");
-        String title = OnlineDB.getParagraph(12864);
-        System.out.println(title);
+        solve();
+        if (true) return;
 
-        String utf8 = new String(title.getBytes( StandardCharsets.UTF_8) , StandardCharsets.UTF_16);
-        System.out.println(utf8);
+        double chance = 0.006;
+        int count = 1000;
+        int max_streak = 0;
+        int streak = 0;
+        double avg = 0;
+        for (int i = 0;i < count;i++){
+            Random rand = new Random();
+            int att = 0;
+            while (rand.nextDouble() > chance){
+                att++;
+                if (att > 80)
+                    break;
+            }
 
-        if (title.contains("من")){
-            System.out.println("it does");
+            if (att == 81){
+                streak++;
+            }else{
+                streak = 0;
+            }
+
+            max_streak = Math.max(streak , max_streak);
+
+            avg += att;
+            System.out.print(att + " ");
         }
+
+        System.out.println();
+        avg = avg / count;
+        System.out.println("AVG : " + avg + ", MaxStreak: " + max_streak);
     }
 }
