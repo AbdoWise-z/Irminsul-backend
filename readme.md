@@ -59,7 +59,7 @@
     <a href="#getting-started">Getting Started</a>
     <ul>
         <li><a href="#setting-up-db">Setting Up DB</a></li>
-        <li><a href="#crawling-&-indexing">Crawling & Indexing</a></li>
+        <li><a href="#crawling-and-indexing">Crawling & Indexing</a></li>
         <li><a href="#setting-up-server">Setting Up Server</a></li>
     </ul>
 </li>
@@ -190,7 +190,7 @@ string if you plan to use an online DB)
 for any other type of DB, then you need to implement `IndexerStorage` interface to work with the
 specific type of DB you want.
 
-#### Crawling & Indexing
+#### Crawling and Indexing
 For crawling and indexing, use the corresponding java main file to run the process you want.
 For example, if you want to run the crawler, then you need to run the main function inside
 `CrawlerMain`, likewise `IndexerMain` for indexing. It's not recommended to interrupt the crawler
